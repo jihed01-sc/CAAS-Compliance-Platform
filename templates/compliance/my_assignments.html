@@ -1,0 +1,722 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Assignments{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dark-bg: #1a1a1a;
+        --dark-surface: #2d2d2d;
+        --dark-card: #3a3a3a;
+        --dark-border: #4a4a4a;
+        --dark-text: #e0e0e0;
+        --dark-text-secondary: #b0b0b0;
+        --dark-accent: #6c63ff;
+        --dark-success: #00d4aa;
+        --dark-warning: #ffb800;
+        --dark-danger: #ff6b6b;
+        --dark-info: #17a2b8;
+        --dark-hover: #404040;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--dark-text);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .dark-container {
+        background-color: var(--dark-bg);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .dark-card {
+        background-color: var(--dark-card);
+        border: 1px solid var(--dark-border);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .dark-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .dark-card-header {
+        background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-card) 100%);
+        border-bottom: 1px solid var(--dark-border);
+        border-radius: 12px 12px 0 0;
+        padding: 1.5rem;
+    }
+
+    .dark-card-body {
+        padding: 1.5rem;
+        background-color: var(--dark-card);
+        border-radius: 0 0 12px 12px;
+    }
+
+    .dark-table {
+        background-color: var(--dark-surface);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .dark-table table {
+        background-color: transparent;
+        color: var(--dark-text);
+        margin: 0;
+    }
+
+    .dark-table th {
+        background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-surface) 100%);
+        color: var(--dark-text);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid var(--dark-border);
+    }
+
+    .dark-table td {
+        background-color: var(--dark-surface);
+        color: var(--dark-text);
+        padding: 1rem;
+        border-bottom: 1px solid var(--dark-border);
+        vertical-align: middle;
+    }
+
+    .dark-table tr:hover td {
+        background-color: var(--dark-hover);
+        transition: background-color 0.2s ease;
+    }
+
+    .dark-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .dark-badge-success {
+        background: linear-gradient(135deg, var(--dark-success) 0%, #00b894 100%);
+        color: white;
+    }
+
+    .dark-badge-danger {
+        background: linear-gradient(135deg, var(--dark-danger) 0%, #e74c3c 100%);
+        color: white;
+    }
+
+    .dark-badge-warning {
+        background: linear-gradient(135deg, var(--dark-warning) 0%, #f39c12 100%);
+        color: white;
+    }
+
+    .dark-badge-info {
+        background: linear-gradient(135deg, var(--dark-info) 0%, #3498db 100%);
+        color: white;
+    }
+
+    .dark-badge-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+    }
+
+    .dark-badge-light {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #212529;
+    }
+
+    .dark-btn {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .dark-btn-primary {
+        background: linear-gradient(135deg, var(--dark-accent) 0%, #5a52d5 100%);
+        color: white;
+    }
+
+    .dark-btn-primary:hover {
+        background: linear-gradient(135deg, #5a52d5 0%, #4c44c4 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+        color: white;
+    }
+
+    .dark-btn-outline-primary {
+        background: transparent;
+        border: 2px solid var(--dark-accent);
+        color: var(--dark-accent);
+    }
+
+    .dark-btn-outline-primary:hover {
+        background: var(--dark-accent);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+    }
+
+    .dark-btn-outline-success {
+        background: transparent;
+        border: 2px solid var(--dark-success);
+        color: var(--dark-success);
+    }
+
+    .dark-btn-outline-success:hover {
+        background: var(--dark-success);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4);
+    }
+
+    .dark-btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .dark-btn-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .page-title {
+        color: var(--dark-text);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--dark-text) 0%, var(--dark-accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        color: var(--dark-text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-card {
+        background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-surface) 100%);
+        border: 1px solid var(--dark-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .stats-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        color: var(--dark-text-secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--dark-text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .empty-state-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--dark-text);
+    }
+
+    .priority-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+
+    .priority-high {
+        background-color: var(--dark-danger);
+        box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    }
+
+    .priority-medium {
+        background-color: var(--dark-warning);
+        box-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+    }
+
+    .priority-low {
+        background-color: var(--dark-success);
+        box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+    }
+
+    .control-id {
+        font-family: 'JetBrains Mono', 'Monaco', monospace;
+        font-weight: 600;
+        color: var(--dark-accent);
+        background: rgba(108, 99, 255, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+    }
+
+    .system-name {
+        color: var(--dark-text);
+        font-weight: 500;
+    }
+
+    .control-title {
+        color: var(--dark-text);
+        font-weight: 500;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .due-date {
+        font-weight: 500;
+    }
+
+    .due-date.overdue {
+        color: var(--dark-danger);
+        font-weight: 600;
+    }
+
+    .due-date.today {
+        color: var(--dark-warning);
+        font-weight: 600;
+    }
+
+    .modal-dark {
+        --bs-modal-bg: var(--dark-card);
+        --bs-modal-border-color: var(--dark-border);
+        --bs-modal-color: var(--dark-text);
+    }
+
+    .modal-dark .modal-header {
+        background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-card) 100%);
+        border-bottom: 1px solid var(--dark-border);
+    }
+
+    .modal-dark .modal-title {
+        color: var(--dark-text);
+    }
+
+    .modal-dark .form-control {
+        background-color: var(--dark-surface);
+        border: 1px solid var(--dark-border);
+        color: var(--dark-text);
+    }
+
+    .modal-dark .form-control:focus {
+        background-color: var(--dark-surface);
+        border-color: var(--dark-accent);
+        color: var(--dark-text);
+        box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+    }
+
+    .modal-dark .form-select {
+        background-color: var(--dark-surface);
+        border: 1px solid var(--dark-border);
+        color: var(--dark-text);
+    }
+
+    .modal-dark .form-label {
+        color: var(--dark-text);
+        font-weight: 500;
+    }
+
+    .filter-controls {
+        background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-card) 100%);
+        border: 1px solid var(--dark-border);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control-dark {
+        background-color: var(--dark-surface);
+        border: 1px solid var(--dark-border);
+        color: var(--dark-text);
+        border-radius: 6px;
+    }
+
+    .form-control-dark:focus {
+        background-color: var(--dark-surface);
+        border-color: var(--dark-accent);
+        color: var(--dark-text);
+        box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+    }
+
+    @media (max-width: 768px) {
+        .dark-table {
+            font-size: 0.875rem;
+        }
+        
+        .dark-btn-group {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .control-title {
+            max-width: 150px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dark-container">
+    <div class="container-fluid">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="page-title">
+                    <i class="fas fa-tasks me-3"></i>My Assignments
+                </h1>
+                <p class="page-subtitle">Manage your assigned compliance controls and track progress</p>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-clipboard-list" style="color: var(--dark-accent);"></i>
+                    </div>
+                    <div class="stats-number" style="color: var(--dark-accent);">
+                        {{ assignments|length }}
+                    </div>
+                    <div class="stats-label">Total Assignments</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-check-circle" style="color: var(--dark-success);"></i>
+                    </div>
+                    <div class="stats-number" style="color: var(--dark-success);">
+                        {{ compliant_count|default:0 }}
+                    </div>
+                    <div class="stats-label">Compliant</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-clock" style="color: var(--dark-warning);"></i>
+                    </div>
+                    <div class="stats-number" style="color: var(--dark-warning);">
+                        {{ pending_count|default:0 }}
+                    </div>
+                    <div class="stats-label">Pending</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-exclamation-triangle" style="color: var(--dark-danger);"></i>
+                    </div>
+                    <div class="stats-number" style="color: var(--dark-danger);">
+                        {{ overdue_count|default:0 }}
+                    </div>
+                    <div class="stats-label">Overdue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <input type="text" class="form-control form-control-dark" id="searchFilter" placeholder="Search assignments...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control form-control-dark" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="partial">Partial</option>
+                        <option value="compliant">Compliant</option>
+                        <option value="non_compliant">Non-Compliant</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control form-control-dark" id="priorityFilter">
+                        <option value="">All Priority</option>
+                        <option value="high">High Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="dark-btn dark-btn-outline-primary w-100" onclick="clearFilters()">
+                        <i class="fas fa-times me-2"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dark-card">
+                    <div class="dark-card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Assigned Controls
+                            </h5>
+                            <span class="dark-badge dark-badge-info">{{ assignments|length }} total</span>
+                        </div>
+                    </div>
+                    <div class="dark-card-body p-0">
+                        {% if assignments %}
+                            <div class="dark-table">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Control ID</th>
+                                            <th>Title</th>
+                                            <th>System</th>
+                                            <th>Status</th>
+                                            <th>Due Date</th>
+                                            <th>Priority</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for assignment in assignments %}
+                                        <tr data-status="{{ assignment.status }}" data-control-id="{{ assignment.control.control_id }}" data-system="{{ assignment.system.name }}">
+                                            <td>
+                                                <span class="control-id">{{ assignment.control.control_id }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="control-title" title="{{ assignment.control.title }}">
+                                                    {{ assignment.control.title }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="system-name">{{ assignment.system.name }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="dark-badge 
+                                                    {% if assignment.status == 'compliant' %}dark-badge-success
+                                                    {% elif assignment.status == 'non_compliant' %}dark-badge-danger
+                                                    {% elif assignment.status == 'partial' %}dark-badge-warning
+                                                    {% elif assignment.status == 'pending' %}dark-badge-secondary
+                                                    {% else %}dark-badge-light
+                                                    {% endif %}">
+                                                    {{ assignment.get_status_display|default:assignment.status|title }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if assignment.due_date %}
+                                                    <span class="due-date {% if assignment.due_date|date:'Y-m-d' < today|date:'Y-m-d' %}overdue{% elif assignment.due_date|date:'Y-m-d' == today|date:'Y-m-d' %}today{% endif %}">
+                                                        {{ assignment.due_date|date:"M d, Y" }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-muted">No due date</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if assignment.due_date %}
+                                                    {% if assignment.due_date|date:'Y-m-d' < today|date:'Y-m-d' %}
+                                                        <span class="priority-indicator priority-high"></span>
+                                                        <span class="dark-badge dark-badge-danger">High</span>
+                                                    {% elif assignment.due_date|date:'Y-m-d' == today|date:'Y-m-d' %}
+                                                        <span class="priority-indicator priority-medium"></span>
+                                                        <span class="dark-badge dark-badge-warning">Medium</span>
+                                                    {% else %}
+                                                        <span class="priority-indicator priority-low"></span>
+                                                        <span class="dark-badge dark-badge-info">Low</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="priority-indicator priority-low"></span>
+                                                    <span class="dark-badge dark-badge-secondary">Normal</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="dark-btn-group">
+                                                    <a href="{% url 'compliance:control_detail' assignment.pk %}"
+                                                       class="dark-btn dark-btn-outline-primary dark-btn-sm" 
+                                                       title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    {% if assignment.status != 'compliant' %}
+                                                    <button type="button" 
+                                                            class="dark-btn dark-btn-outline-success dark-btn-sm" 
+                                                            title="Update Status"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#updateStatusModal{{ assignment.pk }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <h3 class="empty-state-title">No assignments yet</h3>
+                                <p>You don't have any control assignments at the moment.</p>
+                                <a href="{% url 'compliance:dashboard_view' %}" class="dark-btn dark-btn-primary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Status Modals -->
+{% for assignment in assignments %}
+{% if assignment.status != 'compliant' %}
+<div class="modal fade modal-dark" id="updateStatusModal{{ assignment.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Status - {{ assignment.control.control_id }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'compliance:update_control_status' assignment.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="status{{ assignment.pk }}" class="form-label">Status</label>
+                        <select class="form-control form-control-dark" id="status{{ assignment.pk }}" name="status" required>
+                            <option value="pending" {% if assignment.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="partial" {% if assignment.status == 'partial' %}selected{% endif %}>Partial</option>
+                            <option value="compliant" {% if assignment.status == 'compliant' %}selected{% endif %}>Compliant</option>
+                            <option value="non_compliant" {% if assignment.status == 'non_compliant' %}selected{% endif %}>Non-Compliant</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes{{ assignment.pk }}" class="form-label">Notes</label>
+                        <textarea class="form-control form-control-dark" id="notes{{ assignment.pk }}" name="notes" rows="3" placeholder="Add notes about the status update...">{{ assignment.notes }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="dark-btn dark-btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="dark-btn dark-btn-primary">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter functionality
+    function filterAssignments() {
+        const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const priorityFilter = document.getElementById('priorityFilter').value;
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const controlId = row.dataset.controlId.toLowerCase();
+            const systemName = row.dataset.system.toLowerCase();
+            const status = row.dataset.status;
+            const title = row.querySelector('.control-title').textContent.toLowerCase();
+            
+            let showRow = true;
+
+            // Search filter
+            if (searchTerm && !controlId.includes(searchTerm) && !systemName.includes(searchTerm) && !title.includes(searchTerm)) {
+                showRow = false;
+            }
+
+            // Status filter
+            if (statusFilter && status !== statusFilter) {
+                showRow = false;
+            }
+
+            // Priority filter (simplified - you might want to implement actual priority logic)
+            if (priorityFilter) {
+                const priorityElement = row.querySelector('.priority-indicator');
+                if (priorityFilter === 'high' && !priorityElement.classList.contains('priority-high')) {
+                    showRow = false;
+                } else if (priorityFilter === 'medium' && !priorityElement.classList.contains('priority-medium')) {
+                    showRow = false;
+                } else if (priorityFilter === 'low' && !priorityElement.classList.contains('priority-low')) {
+                    showRow = false;
+                }
+            }
+
+            row.style.display = showRow ? '' : 'none';
+        });
+    }
+
+    function clearFilters() {
+        document.getElementById('searchFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('priorityFilter').value = '';
+        filterAssignments();
+    }
+
+    // Add event listeners
+    document.getElementById('searchFilter').addEventListener('input', filterAssignments);
+    document.getElementById('statusFilter').addEventListener('change', filterAssignments);
+    document.getElementById('priorityFilter').addEventListener('change', filterAssignments);
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Auto-refresh every 5 minutes
+    setInterval(function() {
+        // You can add AJAX call here to refresh assignments
+        // without full page reload if needed
+    }, 300000);
+</script>
+{% endblock %}
+

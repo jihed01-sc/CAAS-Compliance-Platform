@@ -1,0 +1,3587 @@
+{% load dict_extras %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAAS - Compliance as a Service</title>
+
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard_welcome_enhanced.css' %}">
+    <link rel="stylesheet" href="{% static 'css/audit_invitation.css' %}">
+    <style>
+        :root {
+            --primary-bg: #131215;
+            --secondary-bg: rgba(19, 18, 21, 0.35);
+            --card-bg: rgba(19, 18, 21, 0.68);
+            --neon-blue: rgb(21, 71, 163);
+            --neon-purple: rgb(92, 4, 21);
+            --neon-green: #12a61e;
+            --neon-pink: #770335;
+            --text-primary: #eeeff1;
+            --text-secondary: #b3b3b3;
+            --text-muted: #666666;
+            --border-color: #333;
+            --success: #19bf72;
+            --warning: #a3843f;
+            --danger: #800727;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        }
+        /* Dashboard Table Cursor and Particle Fix */
+
+/* Prevent cursor glow and particles from interfering with table interactions */
+.table-container {
+    position: relative;
+    z-index: 10 !important;
+}
+
+.table-container * {
+    position: relative;
+    z-index: 11 !important;
+}
+
+/* Hide cursor glow completely within table area */
+.table-container .cursor-glow {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* Make particles non-interactive and behind table */
+.table-container .particle {
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.table-container .particle-trail {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* Ensure table buttons and interactive elements are above particles */
+.table-button {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 0.8em 1em;
+    padding-left: 0.9em;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    color: white;
+    min-width: 90px;
+    height: 40px;
+    justify-content: center;
+}
+
+.table-button.primary {
+    background: var(--neon-blue);
+}
+
+.table-button.success {
+    background: var(--success);
+}
+
+.table-button.danger {
+    background: var(--danger);
+}
+
+.table-button span {
+    display: block;
+    margin-left: 0.3em;
+    transition: all 0.3s ease-in-out;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.table-button .svg-wrapper {
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.table-button .svg-wrapper svg {
+    width: 14px;
+    height: 14px;
+}
+
+.table-button:hover .svg-wrapper {
+    animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+.table-button:hover .svg-wrapper svg {
+    transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+.table-button:hover span {
+    transform: translateX(5em);
+}
+
+.table-button:active {
+    transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+    from {
+        transform: translateY(0.1em);
+    }
+    to {
+        transform: translateY(-0.1em);
+    }
+}
+
+/* Hide cursor glow completely within table area */
+.table-container .cursor-glow {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* Make particles non-interactive and behind table */
+.table-container .particle {
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.table-container .particle-trail {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* Ensure table buttons and interactive elements are above particles */
+.table-button {
+    position: relative;
+    z-index: 15 !important;
+}
+
+.data-table th,
+.data-table td {
+    position: relative;
+    z-index: 12 !important;
+}
+
+/* Main content area should be above particles */
+.main-content {
+    position: relative;
+    z-index: 5;
+}
+
+/* Additional fix: disable particle creation within table area */
+.table-container .particle-container {
+    display: none !important;
+}
+
+/* Ensure all form elements in table are above particles */
+.table-container input,
+.table-container select,
+.table-container button,
+.table-container a {
+    position: relative;
+    z-index: 13 !important;
+}
+
+/* Prevent particle animations from affecting table performance */
+.table-container .particle.attracted,
+.table-container .particle.pulsing {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+}
+
+        /* Enhanced Dynamic Particle System */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform, opacity, filter;
+        }
+
+        /* Main floating particles - Enhanced visibility */
+        .particle-main {
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--neon-blue) 0%, rgba(0, 200, 255, 0.3) 100%);
+            box-shadow:
+                0 0 15px var(--neon-blue),
+                0 0 30px var(--neon-blue),
+                0 0 45px var(--neon-blue),
+                0 0 60px rgba(0, 200, 255, 0.2);
+            opacity: 0.9;
+            animation: floatMain 25s infinite linear, pulse 3s infinite ease-in-out;
+        }
+
+        /* Secondary particles - Enhanced visibility */
+        .particle-secondary {
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(circle, var(--neon-purple) 0%, rgba(147, 51, 234, 0.3) 100%);
+            box-shadow:
+                0 0 12px var(--neon-purple),
+                0 0 24px var(--neon-purple),
+                0 0 36px rgba(147, 51, 234, 0.2);
+            opacity: 0.8;
+            animation: floatSecondary 30s infinite linear, pulse 2.5s infinite ease-in-out;
+        }
+
+        /* Accent particles - Enhanced visibility */
+        .particle-accent {
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, var(--neon-green) 0%, rgba(16, 185, 129, 0.3) 100%);
+            box-shadow:
+                0 0 10px var(--neon-green),
+                0 0 20px var(--neon-green),
+                0 0 30px rgba(16, 185, 129, 0.2);
+            opacity: 0.7;
+            animation: floatAccent 20s infinite linear, pulse 2s infinite ease-in-out;
+        }
+
+        /* Cursor trail particles - More visible */
+        .particle-trail {
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, var(--neon-pink) 0%, rgba(236, 72, 153, 0.3) 100%);
+            box-shadow:
+                0 0 15px var(--neon-pink),
+                0 0 30px var(--neon-pink),
+                0 0 45px rgba(236, 72, 153, 0.3);
+            opacity: 1;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: trailFade 0.8s ease-out forwards;
+        }
+
+        /* Sparkle particles - New enhanced visibility */
+        .particle-sparkle {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            opacity: 0.9;
+            animation: sparkleShimmer 1.5s infinite ease-in-out, floatAccent 15s infinite linear;
+        }
+
+        /* Floating animations with more dynamic movement */
+        @keyframes floatMain {
+            0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes floatSecondary {
+            0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(-30px) rotate(-360deg); opacity: 0; }
+        }
+
+        @keyframes floatAccent {
+            0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(20px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Pulse animation for particles */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.2);
+                filter: brightness(1.5);
+            }
+        }
+
+        /* Trail fade animation */
+        @keyframes trailFade {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        /* Sparkle shimmer animation for special particles */
+        @keyframes sparkleShimmer {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                filter: brightness(1) hue-rotate(0deg);
+            }
+            25% {
+                transform: scale(1.3) rotate(90deg);
+                filter: brightness(1.8) hue-rotate(90deg);
+            }
+            50% {
+                transform: scale(0.8) rotate(180deg);
+                filter: brightness(2.2) hue-rotate(180deg);
+            }
+            75% {
+                transform: scale(1.1) rotate(270deg);
+                filter: brightness(1.5) hue-rotate(270deg);
+            }
+        }
+
+        /* Cursor glow effect */
+        .cursor-glow {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, var(--neon-pink) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+            box-shadow:
+                0 0 20px var(--neon-pink),
+                0 0 40px var(--neon-pink),
+                0 0 60px rgba(236, 72, 153, 0.3);
+            animation: cursorPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes cursorPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+        }
+
+        /* Interactive particle states - Enhanced */
+        .particle.attracted {
+            filter: brightness(2) saturate(1.5) hue-rotate(30deg);
+            box-shadow:
+                0 0 25px currentColor,
+                0 0 50px currentColor,
+                0 0 75px rgba(255, 255, 255, 0.2);
+            animation-duration: 1s;
+        }
+
+        .particle.pulsing {
+            animation: attractedPulse 0.5s infinite ease-in-out;
+        }
+
+        @keyframes attractedPulse {
+            0%, 100% {
+                transform: scale(1.5);
+                filter: brightness(3) saturate(2);
+            }
+            50% {
+                transform: scale(2);
+                filter: brightness(4) saturate(3);
+            }
+        }
+
+        /* Connection lines between particles - Enhanced */
+        .particle-connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg,
+                rgba(0, 200, 255, 0.6) 0%,
+                rgba(147, 51, 234, 0.4) 50%,
+                rgba(16, 185, 129, 0.6) 100%);
+            box-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.8;
+            animation: connectionFlow 2s infinite ease-in-out;
+        }
+
+        @keyframes connectionFlow {
+            0%, 100% {
+                opacity: 0.3;
+                filter: brightness(1);
+            }
+            50% {
+                opacity: 0.8;
+                filter: brightness(1.5);
+            }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(22, 22, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Navigation Links */
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-center a:hover {
+            color: var(--neon-blue);
+        }
+
+        .nav-center a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-center a:hover::after {
+            width: 100%;
+        }
+
+        /* Auth Navigation */
+        .auth-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* ===== STUNNING ANIMATED BUTTONS - Uiverse.io Style ===== */
+
+        /* Base Button - removing default styling */
+        .uiverse-button {
+            margin: 0;
+            height: auto;
+            background: transparent;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Primary Action Button */
+        .uiverse-button.primary {
+            --border-right: 4px;
+            --text-stroke-color: rgba(0, 212, 255, 0.6);
+            --animation-color: #00d4ff;
+            --fs-size: 1rem;
+            letter-spacing: 2px;
+            font-size: var(--fs-size);
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-stroke-color);
+            font-weight: 700;
+        }
+
+        /* Success Button Variant */
+        .uiverse-button.success {
+            --border-right: 4px;
+            --text-stroke-color: rgba(0, 255, 136, 0.6);
+            --animation-color: #00ff88;
+            --fs-size: 1rem;
+            letter-spacing: 2px;
+            font-size: var(--fs-size);
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-stroke-color);
+            font-weight: 700;
+        }
+
+        /* Danger Button Variant */
+        .uiverse-button.danger {
+            --border-right: 4px;
+            --text-stroke-color: rgba(255, 0, 110, 0.6);
+            --animation-color: #ff006e;
+            --fs-size: 1rem;
+            letter-spacing: 2px;
+            font-size: var(--fs-size);
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-stroke-color);
+            font-weight: 700;
+        }
+
+        /* Small Action Button */
+        .uiverse-button.small {
+            --border-right: 3px;
+            --text-stroke-color: rgba(0, 212, 255, 0.6);
+            --animation-color: #00d4ff;
+            --fs-size: 0.85rem;
+            letter-spacing: 1px;
+            font-size: var(--fs-size);
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-stroke-color);
+            font-weight: 600;
+        }
+
+        .uiverse-button.small.success {
+            --text-stroke-color: rgba(0, 255, 136, 0.6);
+            --animation-color: #00ff88;
+        }
+
+        .uiverse-button.small.danger {
+            --text-stroke-color: rgba(255, 0, 110, 0.6);
+            --animation-color: #ff006e;
+        }
+
+        /* Button Text Spans */
+        .uiverse-button .button-text {
+            position: relative;
+            z-index: 2;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 25px;
+        }
+
+        .uiverse-button.small .button-text {
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        /* Hover Text Animation */
+        .uiverse-button .hover-text {
+            position: absolute;
+            box-sizing: border-box;
+            content: attr(data-text);
+            color: var(--animation-color);
+            width: 0%;
+            inset: 0;
+            border-right: var(--border-right) solid var(--animation-color);
+            overflow: hidden;
+            transition: 0.6s ease-in-out;
+            -webkit-text-stroke: 1px var(--animation-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            border-radius: 25px;
+            gap: 10px;
+        }
+
+        .uiverse-button.small .hover-text {
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        /* Hover Effect */
+        .uiverse-button:hover .hover-text {
+            width: 100%;
+            filter: drop-shadow(0 0 25px var(--animation-color));
+            box-shadow: 0 0 40px rgba(var(--animation-color), 0.5);
+        }
+
+        .uiverse-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Auth Buttons */
+        .auth-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            font-weight: 500;
+            background: transparent;
+        }
+        .auth-btn:hover {
+            color: var(--neon-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+         .auth-btn.logout:hover {
+            color: var(--danger);
+            box-shadow: 0 5px 15px rgba(255, 0, 110, 0.3);
+        }
+
+
+        /* Submit Button */
+        .submit-btn {
+            --glow-color: rgb(0, 212, 255);
+            --glow-spread-color: rgba(0, 212, 255, 0.6);
+            --btn-color: rgb(0, 100, 150);
+            border: .2em solid var(--glow-color);
+            padding: 1em 2em;
+            color: var(--glow-color);
+            font-size: 14px;
+            font-weight: bold;
+            background-color: var(--btn-color);
+            border-radius: 1em;
+            outline: none;
+            box-shadow: 0 0 1em .2em var(--glow-color),
+                   0 0 3em 1em var(--glow-spread-color),
+                   inset 0 0 .5em .2em var(--glow-color);
+            text-shadow: 0 0 .4em var(--glow-color);
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
+        }
+
+        .submit-btn::after {
+            pointer-events: none;
+            content: "";
+            position: absolute;
+            top: 120%;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: var(--glow-spread-color);
+            filter: blur(1.5em);
+            opacity: .7;
+            transform: perspective(1.2em) rotateX(35deg) scale(1, .6);
+        }
+
+        .submit-btn:hover {
+            color: var(--btn-color);
+            background-color: var(--glow-color);
+            box-shadow: 0 0 1em .25em var(--glow-color),
+                   0 0 4em 1.5em var(--glow-spread-color),
+                   inset 0 0 .75em .25em var(--glow-color);
+        }
+
+        .submit-btn:active {
+            box-shadow: 0 0 0.6em .2em var(--glow-color),
+                   0 0 2em 1.5em var(--glow-spread-color),
+                   inset 0 0 .4em .2em var(--glow-color);
+        }
+
+
+        /* Hero Section */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .typing-text {
+            font-size: 1.2rem;
+            color: rgb(128, 100, 7);
+            margin-bottom: 2rem;
+            min-height: 1.5rem;
+        }
+
+        /* Custom Welcome Message with FORTRESS PLUS branding */
+        .hero-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-title span {
+            display: inline-block;
+            animation: text-flicker-in-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes text-flicker-in-glow {
+            0%, 100% {
+                text-shadow:
+                    0 0 5px var(--neon-blue),
+                    0 0 10px var(--neon-blue),
+                    0 0 15px rgb(19, 18, 21),
+                    0 0 20px rgb(22, 73, 166),
+                    0 0 25px rgb(21, 71, 163);
+            }
+            50% {
+                text-shadow:
+                    0 0 10px var(--neon-blue),
+                    0 0 20px var(--neon-blue),
+                    0 0 30px rgb(51, 51, 51),
+                    0 0 40px rgb(21, 71, 163),
+                    0 0 50px rgb(22, 73, 166);
+            }
+        }
+
+        /* Summary of Initialization Parameters */
+        .initialization-summary {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .initialization-summary h3 {
+            color: var(--neon-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .framework-tags,
+        .module-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .framework-tag,
+        .module-tag {
+            background: var(--neon-blue);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin: 0.2rem;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+
+        /* Progress Status with Visual Indicators */
+        .progress-status {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .progress-status h3 {
+            color: var(--neon-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .progress-status .score-container {
+            background: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid var(--neon-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            background: radial-gradient(circle, var(--neon-green)10, transparent 50%);
+        }
+
+        /* Step-by-Step Navigation */
+        .journey-navigation {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .journey-navigation h3 {
+            color: var(--neon-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .journey-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .journey-step {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .journey-step:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Additional Options */
+        .additional-options {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .additional-options h3 {
+            color: var(--neon-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        /* Audit History Section */
+        #auditHistory {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .history-list {
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Framework Logos */
+        .frameworks {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .framework-logo {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .framework-logo:hover {
+            border-color: var(--neon-purple);
+            color: var(--neon-purple);
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Section */
+        .dashboard {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 212, 255, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dashboard-header:hover::before {
+            opacity: 1;
+        }
+
+        .dashboard-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 1rem;
+        }
+
+        .dashboard-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+
+        .add-system-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Add System Button */
+        .add-system-btn {
+            --glow-color: rgb(16, 18, 17);
+            --glow-spread-color: rgb(14, 168, 27);
+            --btn-color: rgb(0, 120, 60);
+            border: .2em solid var(--glow-color);
+            padding: 1em 2em;
+            color: var(--glow-color);
+            font-size: 14px;
+            font-weight: bold;
+            background-color: var(--btn-color);
+            border-radius: 1em;
+            outline: none;
+            box-shadow: 0 0 1em .2em var(--glow-color),
+                   0 0 3em 1em var(--glow-spread-color),
+                   inset 0 0 .5em .2em var(--glow-color);
+            text-shadow: 0 0 .4em var(--glow-color);
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin: 0 auto; /* Center the button */
+            max-width: 300px; /* Optional: limit the width */
+        }
+
+        .add-system-btn::after {
+            pointer-events: none;
+            content: "";
+            position: absolute;
+            top: 120%;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: var(--glow-spread-color);
+            filter: blur(1.5em);
+            opacity: .7;
+            transform: perspective(1.2em) rotateX(35deg) scale(1, .6);
+        }
+
+        .add-system-btn:hover {
+            color: var(--btn-color);
+            background-color: var(--glow-color);
+            box-shadow: 0 0 1em .25em var(--glow-color),
+                   0 0 4em 1.5em var(--glow-spread-color),
+                   inset 0 0 .75em .25em var(--glow-color);
+            transform: translateY(-3px);
+        }
+
+        .add-system-btn:active {
+            box-shadow: 0 0 0.6em .2em var(--glow-color),
+                   0 0 2em 1.5em var(--glow-spread-color),
+                   inset 0 0 .4em .2em var(--glow-color);
+            transform: translateY(-1px);
+        }
+        .take-ass-btn-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+
+        .take-ass-btn {
+            --glow-color: rgb(23, 22, 22);
+            --glow-spread-color: rgb(138, 145, 158);
+            --btn-color: rgb(122, 131, 151);
+            border: .2em solid var(--glow-color);
+            padding: 1em 2em;
+            color: var(--glow-color);
+            font-size: 14px;
+            font-weight: bold;
+            background-color: var(--btn-color);
+            border-radius: 1em;
+            outline: none;
+            box-shadow: 0 0 1em .2em var(--glow-color),
+                   0 0 3em 1em var(--glow-spread-color),
+                   inset 0 0 .5em .2em var(--glow-color);
+            text-shadow: 0 0 .4em var(--glow-color);
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin: 0 auto; /* Center the button */
+            max-width: 300px; /* Optional: limit the width */
+        }
+
+        .take-ass-btn::after {
+            pointer-events: none;
+            content: "";
+            position: absolute;
+            top: 120%;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: var(--glow-spread-color);
+            filter: blur(1.5em);
+            opacity: .7;
+            transform: perspective(1.2em) rotateX(35deg) scale(1, .6);
+        }
+
+        .take-ass-btn:hover {
+            color: var(--btn-color);
+            background-color: var(--glow-color);
+            box-shadow: 0 0 1em .25em var(--glow-color),
+                   0 0 4em 1.5em var(--glow-spread-color),
+                   inset 0 0 .75em .25em var(--glow-color);
+            transform: translateY(-3px);
+        }
+
+        .take-ass-btn:active {
+            box-shadow: 0 0 0.6em .2em var(--glow-color),
+                   0 0 2em 1.5em var(--glow-spread-color),
+                   inset 0 0 .4em .2em var(--glow-color);
+            transform: translateY(-1px);
+        }
+
+ /* Table Styles */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            background: var(--secondary-bg);
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .data-table td:last-child {
+            min-width: 300px;
+            white-space: nowrap;
+        }
+
+        /* Status Badges */
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-compliant {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-ad {
+            background: rgba(255, 0, 110, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .status-partially_compliant {
+            background: rgba(255, 176, 0, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .status-under_review {
+            background: rgb(228, 206, 209);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+        }
+         .status-non_compliant{
+            background: rgb(32, 3, 3);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+        }
+
+        /* Progress Bars in Table */
+        .progress-container {
+            background: var(--border-color);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(0, 212, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(0, 212, 255, 0.8), 0 0 25px rgba(0, 255, 136, 0.4);
+            }
+        }
+
+        @keyframes progressShine {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Progress text animation */
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            animation: progressPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes progressPulse {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+                color: var(--neon-blue);
+            }
+        }
+
+
+        /* Countdown Timer */
+        .countdown {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            color: var(--warning);
+        }
+
+        .countdown.urgent {
+            color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--border-color);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Expand Icon */
+        .expand-icon {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .expand-icon:hover {
+            color: var(--neon-blue);
+            transform: scale(1.2);
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+            color: var(--neon-blue);
+        }
+
+        /* Text Muted */
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            color: var(--neon-blue);
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Form Styles */
+        .form-section {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: var(--neon-purple);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.5rem;
+        }
+
+        /* Compliance Standards in Dashboard */
+        .dashboard-compliance-standards {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .compliance-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .compliance-logos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            align-items: center;
+        }
+
+        .compliance-logo {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .compliance-logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .compliance-logo:hover::before {
+            opacity: 1;
+        }
+
+        .compliance-logo:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .compliance-logo img {
+            width: 100%;
+            max-width: 80px;
+            height: auto;
+            object-fit: contain;
+            transition: all 0.3s;
+        }
+
+        .compliance-logo:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Dashboard Header Enhancement */
+        .dashboard-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 212, 255, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dashboard-header:hover::before {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    <div class="particle-container" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">CAAS</div>
+            <nav>
+                <ul class="nav-center">
+                    <li><a href="{% url 'compliance:dashboard_view' %}">Dashboard</a></li>
+                    <li><a href="{% url 'compliance:my_assignments' %}">My Tasks</a></li>
+                    <li><a href="{% url 'compliance:reports_dashboard' %}">Reports</a></li>
+                </ul>
+            </nav>
+
+            <!-- Auth Navigation -->
+            <div class="auth-nav">
+                <!-- User Info -->
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    <span>{{ user.get_full_name }}</span>
+                </div>
+
+                <!-- Notification Icon -->
+                <a href="{% url 'compliance:notifications' %}" class="auth-btn notification-badge" data-count="{{ unread_notifications|length }}">
+                    <i class="fas fa-bell"></i>
+                </a>
+
+                <!-- Logout Button -->
+                <a href="{% url 'custom_logout_view' %}" class="auth-btn logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+          <div class="welcome-container">
+    <div class="welcome-header">
+        <h1 class="hero-title-enhanced">
+            🚀 FORTRESS PLUS COMMAND CENTER
+        </h1>
+
+        <div class="user-id-display">
+            <div class="user-avatar-large">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <div class="user-info-advanced">
+                <div class="welcome-text">Welcome back,</div>
+                <div class="user-name-glow">{{ user.get_full_name|default:user.username }}</div>
+                <div class="user-id-code">ID: #{{ user.id|stringformat:"06d" }}</div>
+            </div>
+            <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                <span>ONLINE</span>
+            </div>
+        </div>
+    </div>
+</div>
+            <h2 class="hero-subtitle">Advanced Compliance Intelligence Platform</h2>
+            <div class="typing-text" id="typing-text"></div>
+
+            <!-- Compliance Standards Section -->
+            <div class="dashboard-compliance-standards">
+                <h3 class="compliance-title">
+                    <i class="fas fa-certificate"></i> Supported Compliance Standards
+                </h3>
+                <div class="compliance-logos">
+                    <div class="compliance-logo">
+                        <img src="{% static 'compliance/iso.png' %}" alt="ISO 27001/27002">
+                        <div class="compliance-tag iso-tag">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>ISO 27001/27002</span>
+                    </div>
+                    </div>
+                    <div class="compliance-logo">
+                        <img src="{% static 'compliance/iec62443.png' %}" alt="IEC 62443">
+                          <div class="compliance-tag iec-tag">
+                        <i class="fas fa-industry"></i>
+                        <span>IEC 62443</span>
+                    </div>
+                    </div>
+                    <div class="compliance-logo">
+                        <img src="{% static 'compliance/nis2.png' %}" alt="NIS 2 Directive">
+                        <div class="compliance-tag nis-tag">
+                        <i class="fas fa-globe-europe"></i>
+                        <span>NIS 2 Directive</span>
+                    </div>
+                    </div>
+                     <div class="compliance-logo">
+                        <img src="{% static 'compliance/fortress.png' %}" alt="Unified Security Framework">
+
+                    <div class="compliance-tag framework-tag">
+                        <i class="fas fa-fortress"></i>
+                        <span>Unified Security Framework</span>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Framework Tags -->
+                <div class="compliance-tags">
+
+
+
+                </div>
+            </div>
+        <!-- 🚀 INNOVATIVE AUDIT INVITATION SECTION -->
+<div class="audit-invitation-container">
+    <div class="audit-info-card">
+        <div class="audit-icon-wrapper">
+            <div class="rotating-shield">
+                <i class="fas fa-shield-check"></i>
+            </div>
+            <div class="pulse-rings"></div>
+        </div>
+
+        <div class="audit-content">
+            <h3 class="audit-title">
+                <span class="gradient-text">Ready to Elevate Your Security?</span>
+            </h3>
+
+            <div class="audit-description">
+                <p class="main-text">
+                    🎯 <strong>Start your comprehensive cybersecurity audit</strong> with our AI-powered assessment engine.
+                    Our intelligent questionnaire analyzes your organization's security posture across
+                    <span class="highlight-text">ISO 27001, IEC 62443, and NIS2</span> standards.
+                </p>
+
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <i class="fas fa-brain benefit-icon"></i>
+                        <span>AI-Powered Analysis</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-clock benefit-icon"></i>
+                        <span>15-Minute Assessment</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-chart-bar benefit-icon"></i>
+                        <span>Instant Risk Report</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-route benefit-icon"></i>
+                        <span>Custom Roadmap</span>
+                    </div>
+                </div>
+
+                <div class="action-preview">
+                    <div class="preview-steps">
+                        <div class="step-indicator active">
+                            <span class="step-number">1</span>
+                            <span class="step-text">Answer Security Questions</span>
+                        </div>
+                        <div class="step-arrow">→</div>
+                        <div class="step-indicator">
+                            <span class="step-number">2</span>
+                            <span class="step-text">Get Risk Assessment</span>
+                        </div>
+                        <div class="step-arrow">→</div>
+                        <div class="step-indicator">
+                            <span class="step-number">3</span>
+                            <span class="step-text">Receive Action Plan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="take-ass-container">
+    <a href="{% url 'compliance:questionnaire' %}" class="take-ass-btn">
+        <i class="fas fa-rocket"></i>
+        Start Your Security Audit
+    </a>
+
+
+            <!-- Additional Options -->
+            <div class="additional-options" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; margin: 2rem 0;">
+                <h3 style="color: var(--neon-blue); margin-bottom: 1.5rem; font-size: 1.4rem;">
+                    <i class="fas fa-tools"></i> Quick Actions
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <!-- Restart Audit Button -->
+                    <button class="action-btn restart-btn" onclick="confirmRestartAudit()" style="background: var(--danger); border: none; border-radius: 10px; padding: 1rem; color: white; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-redo"></i>
+                        <span>Restart Audit</span>
+                    </button>
+
+                    <!-- Demo Mode Button -->
+                    <button class="action-btn demo-btn" onclick="startDemo()" style="background: var(--neon-purple); border: none; border-radius: 10px; padding: 1rem; color: white; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Demo Mode</span>
+                    </button>
+
+                    <!-- Quick Tutorial Button -->
+                    <button class="action-btn tutorial-btn" onclick="startTutorial()" style="background: var(--warning); border: none; border-radius: 10px; padding: 1rem; color: white; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Quick Tutorial</span>
+                    </button>
+
+                    <!-- Audit History Button -->
+                    <button class="action-btn history-btn" onclick="showAuditHistory()" style="background: var(--neon-blue); border: none; border-radius: 10px; padding: 1rem; color: white; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-history"></i>
+                        <span>Audit History</span>
+                    </button>
+                </div>
+
+                <!-- Audit History Section (Initially Hidden) -->
+                <div id="auditHistory" style="margin-top: 2rem; display: none;">
+                    <h4 style="color: var(--neon-purple); margin-bottom: 1rem;">Recent Audit Sessions</h4>
+                    <div class="history-list" style="background: var(--secondary-bg); border-radius: 8px; padding: 1rem;">
+                        {% if audit_sessions %}
+                            {% for session in audit_sessions %}
+                            <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                                <div>
+                                    <span style="color: var(--text-primary); font-weight: 600;">{{ session.name }}</span>
+                                    <span style="color: var(--text-secondary); margin-left: 1rem;">{{ session.created_at|date:"M d, Y H:i" }}</span>
+                                </div>
+                                <button onclick="loadSession('{{ session.id }}')" style="background: var(--success); border: none; padding: 0.3rem 0.8rem; border-radius: 5px; color: white; cursor: pointer;">Load</button>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--text-muted); text-align: center;">No previous audit sessions found</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">Compliance Dashboard</h2>
+            <p class="dashboard-subtitle">Monitor and manage your compliance controls across all frameworks</p>
+
+        </div>
+        <!-- Summary of Initialization Parameters -->
+            <div class="initialization-summary" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; margin: 2rem 0; text-align: left;">
+                <h3 style="color: var(--neon-blue); margin-bottom: 1.5rem; font-size: 1.4rem;">
+                    <i class="fas fa-cogs"></i> Current Session Parameters
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- Selected Standards -->
+                    <div>
+                        <h4 style="color: var(--neon-purple); margin-bottom: 0.8rem;">
+                            <i class="fas fa-shield-alt"></i> Active Standards ({{ active_frameworks.count }})
+                        </h4>
+                        <div class="framework-tags">
+                            {% for framework in active_frameworks %}
+                                <span class="framework-tag" style="background: var(--neon-blue); color: white; padding: 0.3rem 0.8rem; border-radius: 20px; margin: 0.2rem; display: inline-block; font-size: 0.85rem;">
+                                    {{ framework.name }}
+                                </span>
+                            {% empty %}
+                                <span style="color: var(--text-muted);">No standards assigned to systems</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Active Systems -->
+                    <div>
+                        <h4 style="color: var(--neon-purple); margin-bottom: 0.8rem;">
+                            <i class="fas fa-cubes"></i> Active Systems ({{ user_systems.count }})
+                        </h4>
+                        <div class="module-tags">
+                            {% for system in user_systems %}
+                                <span class="module-tag" style="background: var(--success); color: white; padding: 0.3rem 0.8rem; border-radius: 20px; margin: 0.2rem; display: inline-block; font-size: 0.85rem;">
+                                    {{ system.name }}
+                                </span>
+                            {% empty %}
+                                <span style="color: var(--text-muted);">No systems created</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Session Information -->
+                    <div>
+                        <h4 style="color: var(--neon-purple); margin-bottom: 0.8rem;">
+                            <i class="fas fa-clock"></i> Session Information
+                        </h4>
+                        <div style="color: var(--text-primary);">
+                            <div style="margin-bottom: 0.5rem;">
+                                <strong>Last Login:</strong>
+                                <span style="color: var(--neon-green);">{{ user.last_login|date:"F d, Y - H:i"|default:"Never" }}</span>
+                            </div>
+                            <div style="margin-bottom: 0.5rem;">
+                                <strong>Total Controls:</strong>
+                                <span style="color: var(--neon-blue);">{{ session_parameters.total_controls }}</span>
+                            </div>
+                            <div>
+                                <strong>Compliance Rate:</strong>
+                                <span style="color: {% if session_parameters.compliance_rate >= 80 %}var(--neon-green){% elif session_parameters.compliance_rate >= 50 %}var(--warning){% else %}var(--danger){% endif %};">
+                                    {{ session_parameters.compliance_rate|floatformat:1 }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="add-system-container">
+            <button class="add-system-btn" onclick="openAddSystemModal()">
+                <i class="fas fa-plus"></i>
+                Add New System
+            </button>
+        </div>
+
+        <div class="table-container">
+            {% if framework_data %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>System</th>
+                        <th>Framework</th>
+                        <th>Control</th>
+                        <th>Controller</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in framework_data %}
+                    <tr data-system-id="{{ data.system_id }}" data-framework-id="{{ data.framework_id }}" data-control-status-id="{{ data.control_status_id }}">
+                        <td>
+                            <i class="fas fa-chevron-right expand-icon" onclick="toggleExpand(this)"></i>
+                        </td>
+                        <td>{{ data.system_name }}</td>
+                        <td>{{ data.framework_name }}</td>
+                        <td>{{ data.controls }}</td>
+                        <td>
+                            {% if data.controller %}
+                                {{ data.controller.user.first_name }} {{ data.controller.user.last_name }}
+                            {% else %}
+                                <span class="text-muted">Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ data.status }}">
+                                {{ data.status|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width:{{ data.progress }}%"></div>
+                            </div>
+                            <small>{{ data.progress }}%</small>
+                        </td>
+                        <td>
+                            {% if data.deadline %}
+                                <span class="countdown" data-deadline="{{ data.deadline.isoformat }}">
+                                    {{ data.deadline|timeuntil }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">No deadline</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if data.control_status_id %}
+                                    <button class="table-button primary" onclick="window.location.href='{% url 'compliance:control_detail' control_status_id=data.control_status_id %}'">
+                                        <div class="svg-wrapper-1">
+                                            <div class="svg-wrapper">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                                                    <path fill="none" d="M0 0h24v24H0z"></path>
+                                                    <path fill="currentColor" d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.1 3.89 23 5 23H19C20.1 23 21 22.1 21 21V9M19 3.5L15.5 7H19V3.5Z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span>View</span>
+                                    </button>
+                                    <button class="table-button success" onclick="window.location.href='{% url 'compliance:edit_system' system_id=data.system_id %}'">
+    <div class="svg-wrapper-1">
+        <div class="svg-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M3 19H21V21H3V19ZM13 5.83L16.17 9L17.58 7.59L12 2L6.42 7.59L7.83 9L11 5.83V17H13V5.83Z"></path>
+            </svg>
+        </div>
+    </div>
+    <span>Edit System</span>
+</button>
+                                    <button class="table-button danger" onclick="deleteControl({{ data.control_status_id }})">
+                                        <div class="svg-wrapper-1">
+                                            <div class="svg-wrapper">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                                                    <path fill="none" d="M0 0h24v24H0z"></path>
+                                                    <path fill="currentColor" d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11V17H11V11H9ZM13 11V17H15V11H13ZM9 4V6H15V4H9Z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span>Delete</span>
+                                    </button>
+                                {% else %}
+                                    <span class="text-muted">No controls</span>
+                                {% endif %}
+                                <button class="table-button danger" onclick="deleteSystem({{ data.system_id }})" style="margin-left: 10px;">
+                                    <div class="svg-wrapper-1">
+                                        <div class="svg-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                                <path fill="currentColor" d="M4 6V4H20V6H4ZM6 8H18L17 20H7L6 8ZM9 10V18H11V10H9ZM13 10V18H15V10H13ZM9 4V6H15V4H9Z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span>System</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No Systems Found</h3>
+                <p>Get started by adding your first information system.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Display messages -->
+        {% if messages %}
+        <div style="margin-top: 1rem;">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" style="padding: 1rem; margin: 0.5rem 0; border-radius: 8px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary);">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Enhanced Add System Modal -->
+    <div id="addSystemModal" class="modal">
+        <div class="modal-content" style="max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 class="modal-title">🎯 Enhanced Cybersecurity Compliance Audit Framework</h3>
+                <button class="close-btn" onclick="closeModal('addSystemModal')">&times;</button>
+            </div>
+
+            <form method="post" action="{% url 'compliance:add_system' %}" id="addSystemForm">
+                {% csrf_token %}
+
+                <!-- Basic System Information Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-server"></i> Basic System Information</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">System Name <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="name" required placeholder="Enter system name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Organization</label>
+                            <select class="form-select" name="organization">
+                                <option value="">Select Organization (Optional)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" name="description" rows="3" placeholder="Enter system description"></textarea>
+                    </div>
+                </div>
+
+                <!-- Client Details Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-building"></i> Client Profile & Business Context</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Client Company Name <span class="required">*</span></label>
+                            <input type="text" class="form-input" name="client_company_name" required placeholder="Enter client company name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Business Sector</label>
+                            <select class="form-select" name="client_sector">
+                                <option value="technology">Technology</option>
+                                <option value="finance">Financial Services</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="energy">Energy & Utilities</option>
+                                <option value="government">Government</option>
+                                <option value="education">Education</option>
+                                <option value="retail">Retail</option>
+                                <option value="telecommunications">Telecommunications</option>
+                                <option value="transportation">Transportation</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Organization Size</label>
+                            <select class="form-select" name="organization_size">
+                                <option value="smb">Small & Medium Business (SMB)</option>
+                                <option value="mid-market">Mid-Market</option>
+                                <option value="enterprise">Enterprise</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Operational Scope</label>
+                            <select class="form-select" name="operational_scope">
+                                <option value="it">IT Systems Only</option>
+                                <option value="ot">OT/Industrial Systems Only</option>
+                                <option value="it_ot_convergence">IT/OT Convergence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Geographical Location</label>
+                            <input type="text" class="form-input" name="geographical_location" placeholder="e.g., EU, North America, APAC">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Regulatory Jurisdiction</label>
+                            <select class="form-select" name="regulatory_jurisdiction">
+                                <option value="eu">European Union</option>
+                                <option value="us">United States</option>
+                                <option value="apac">Asia-Pacific</option>
+                                <option value="global">Global/Multi-jurisdiction</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Business Criticality</label>
+                        <select class="form-select" name="business_criticality">
+                            <option value="high">High - Mission Critical</option>
+                            <option value="medium">Medium - Business Important</option>
+                            <option value="low">Low - Support Function</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Branding & Customization Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-palette"></i> Branding & Customization</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Client Logo URL</label>
+                            <input type="url" class="form-input" name="client_logo_url" placeholder="https://example.com/logo.png">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Branding Preferences</label>
+                            <input type="text" class="form-input" name="branding_preferences" placeholder="Brand colors, themes, etc.">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="useClientBranding" name="use_client_branding">
+                            <label for="useClientBranding">Use client branding in reports and documentation</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Standards Selection -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-shield-alt"></i> Compliance Standards & Framework Selection</h4>
+
+                    <div class="form-group">
+                        <label class="form-label">Primary Framework <span class="required">*</span></label>
+                        <select class="form-select" name="framework" onchange="loadControls(this.value)" required>
+                            <option value="">Select Primary Framework</option>
+                            {% for framework in frameworks %}
+                            <option value="{{ framework.id }}">{{ framework.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+
+                    </div>
+                </div>
+
+
+                <!-- Controls Selection -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-list-check"></i> Controls Selection & Implementation Status</h4>
+
+                    <div class="form-group" id="controlsGroup" style="display: none;">
+                        <label class="form-label">Select Controls</label>
+                        <div id="controlsList"></div>
+                    </div>
+
+                    <div class="form-group" id="implementedGroup" style="display: none;">
+                        <label class="form-label">Previous Implementation Status</label>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="previouslyImplemented" name="previously_implemented">
+                            <label for="previouslyImplemented">These controls have been previously implemented</label>
+                        </div>
+                    </div>
+                </div>
+                      <!-- Audit Focus Areas Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-crosshairs"></i> Audit Focus Areas <span class="required">*</span></h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                        Select the security domains you want to focus on during the audit assessment.
+                    </p>
+
+                    <div class="form-group">
+                        <label class="form-label">Core Security Modules <span class="required">*</span></label>
+                        <div class="checkbox-grid">
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="iam" id="iam_module">
+                                <label for="iam_module">Identity & Access Management (IAM)</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="governance" id="governance_module">
+                                <label for="governance_module">Governance & Risk Management</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="logging" id="logging_module">
+                                <label for="logging_module">Logging & Monitoring</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="patch_management" id="patch_module">
+                                <label for="patch_module">Patch Management</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="incident_response" id="incident_module">
+                                <label for="incident_module">Incident Response</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="data_protection" id="data_module">
+                                <label for="data_module">Data Protection & Privacy</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="network_security" id="network_module">
+                                <label for="network_module">Network Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="physical_security" id="physical_module">
+                                <label for="physical_module">Physical Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="business_continuity" id="bc_module">
+                                <label for="bc_module">Business Continuity</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="vendor_management" id="vendor_module">
+                                <label for="vendor_module">Third-Party & Vendor Management</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Technical Domains</label>
+                        <div class="checkbox-grid">
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="technical_domains" value="cloud_security">
+                                <label>Cloud Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="technical_domains" value="endpoint_security">
+                                <label>Endpoint Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="technical_domains" value="application_security">
+                                <label>Application Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="technical_domains" value="database_security">
+                                <label>Database Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="technical_domains" value="ot_security">
+                                <label>OT/Industrial Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="technical_domains" value="mobile_security">
+                                <label>Mobile Security</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Enhanced Controller Assignment -->
+                <div class="form-section" id="controllerSection" style="display: none;">
+                    <h4 class="section-title"><i class="fas fa-user-cog"></i> Enhanced Controller Assignment</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Controller Name</label>
+                            <input type="text" class="form-input" name="controller_name" placeholder="Enter controller's full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" name="controller_email" placeholder="Enter email address">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-input" name="controller_department" placeholder="e.g., Compliance & Security">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Security Clearance Level</label>
+                            <select class="form-select" name="security_clearance_level">
+                                <option value="standard">Standard</option>
+                                <option value="confidential">Confidential</option>
+                                <option value="secret">Secret</option>
+                                <option value="top_secret">Top Secret</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Professional Certifications</label>
+                        <div class="checkbox-grid">
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="controller_certifications" value="cissp">
+                                <label>CISSP</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="controller_certifications" value="cisa">
+                                <label>CISA</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="controller_certifications" value="cism">
+                                <label>CISM</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="controller_certifications" value="iso27001_lead_auditor">
+                                <label>ISO 27001 Lead Auditor</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="controller_certifications" value="iec62443_expert">
+                                <label>IEC 62443 Expert</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="assignController" name="assign_controller" onchange="toggleControllerFields(this)" required>
+                            <label for="assignController">Assign controller to selected controls <span class="required">*</span></label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <button type="submit" class="submit-btn">
+                    <span class="button-text">
+                        <i class="fas fa-rocket"></i>
+                        Initialize Compliance Audit Framework
+                    </span>
+                    <span class="hover-text">
+                        <i class="fas fa-rocket"></i>
+                        Create Advanced Audit System
+                    </span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Dynamic Particle System with Cursor Interaction
+        class ParticleSystem {
+            constructor() {
+                this.particles = [];
+                this.trailParticles = [];
+                this.connections = [];
+                this.mouse = { x: 0, y: 0 };
+                this.container = document.getElementById('particles');
+                this.cursorGlow = null;
+                this.init();
+            }
+
+            init() {
+                this.createCursorGlow();
+                this.createInitialParticles();
+                this.bindEvents();
+                this.animate();
+            }
+
+            createCursorGlow() {
+                this.cursorGlow = document.createElement('div');
+                this.cursorGlow.className = 'cursor-glow';
+                document.body.appendChild(this.cursorGlow);
+            }
+
+            createInitialParticles() {
+                // Create more particles for better visibility
+                for (let i = 0; i < 25; i++) {
+                    this.createParticle('main');
+                }
+
+                // Create secondary particles
+                for (let i = 0; i < 20; i++) {
+                    this.createParticle('secondary');
+                }
+
+                // Create accent particles
+                for (let i = 0; i < 35; i++) {
+                    this.createParticle('accent');
+                }
+
+                // Create special sparkle particles
+                for (let i = 0; i < 15; i++) {
+                    this.createParticle('sparkle');
+                }
+            }
+
+            createParticle(type) {
+                const particle = document.createElement('div');
+                particle.className = `particle particle-${type}`;
+
+                // Random starting position with better distribution
+                if (Math.random() < 0.5) {
+                    // Start from sides
+                    particle.style.left = Math.random() < 0.5 ? '-50px' : (window.innerWidth + 50) + 'px';
+                    particle.style.top = Math.random() * window.innerHeight + 'px';
+                } else {
+                    // Start from top/bottom
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.top = Math.random() < 0.5 ? '-50px' : (window.innerHeight + 50) + 'px';
+                }
+
+                // Store enhanced particle data
+                particle.particleData = {
+                    x: parseFloat(particle.style.left),
+                    y: parseFloat(particle.style.top),
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    type: type,
+                    originalSize: type === 'main' ? 6 : type === 'secondary' ? 5 : type === 'sparkle' ? 3 : 4,
+                    glowIntensity: Math.random() * 0.8 + 0.7,
+                    attracted: false,
+                    rotationSpeed: (Math.random() - 0.5) * 4,
+                    rotation: 0,
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    trailLength: type === 'main' ? 8 : type === 'secondary' ? 6 : 4
+                };
+
+                // Add special sparkle class for new particle type
+                if (type === 'sparkle') {
+                    particle.style.background = `radial-gradient(circle,
+                        hsl(${Math.random() * 360}, 100%, 70%) 0%,
+                        hsla(${Math.random() * 360}, 100%, 50%, 0.3) 100%)`;
+                    particle.style.boxShadow = `
+                        0 0 8px hsl(${Math.random() * 360}, 100%, 70%),
+                        0 0 16px hsl(${Math.random() * 360}, 100%, 50%),
+                        0 0 24px hsla(${Math.random() * 360}, 100%, 40%, 0.2)`;
+                    particle.style.animation = 'sparkleShimmer 1.5s infinite ease-in-out, floatAccent 15s infinite linear';
+                }
+
+                this.container.appendChild(particle);
+                this.particles.push(particle);
+            }
+
+            createTrailParticle(x, y) {
+                const particle = document.createElement('div');
+                particle.className = 'particle particle-trail';
+                particle.style.left = (x - 3) + 'px';
+                particle.style.top = (y - 3) + 'px';
+                particle.style.opacity = '0.9';
+
+                this.container.appendChild(particle);
+                this.trailParticles.push(particle);
+
+                // Animate trail particle
+                setTimeout(() => {
+                    particle.style.opacity = '0';
+                    particle.style.transform = 'scale(0.3)';
+                }, 50);
+
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                    const index = this.trailParticles.indexOf(particle);
+                    if (index > -1) {
+                        this.trailParticles.splice(index, 1);
+                    }
+                }, 800);
+            }
+
+            bindEvents() {
+                let lastTrailTime = 0;
+                const trailDelay = 30; // milliseconds
+
+                document.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+
+                    // Update cursor glow position
+                    if (this.cursorGlow) {
+                        this.cursorGlow.style.left = (e.clientX - 10) + 'px';
+                        this.cursorGlow.style.top = (e.clientY - 10) + 'px';
+                    }
+
+                    // Create trail particles with throttling
+                    const now = Date.now();
+                    if (now - lastTrailTime > trailDelay) {
+                        this.createTrailParticle(e.clientX, e.clientY);
+                        lastTrailTime = now;
+                    }
+
+                    // Apply magnetic effect to nearby particles
+                    this.applyMagneticEffect();
+                });
+
+                // Hide cursor glow when mouse leaves window
+                document.addEventListener('mouseleave', () => {
+                    if (this.cursorGlow) {
+                        this.cursorGlow.style.opacity = '0';
+                    }
+                });
+
+                document.addEventListener('mouseenter', () => {
+                    if (this.cursorGlow) {
+                        this.cursorGlow.style.opacity = '1';
+                    }
+                });
+
+                // Create burst effect on click
+                document.addEventListener('click', (e) => {
+                    this.createBurstEffect(e.clientX, e.clientY);
+                });
+            }
+
+            applyMagneticEffect() {
+                this.particles.forEach(particle => {
+                    const data = particle.particleData;
+                    const dx = this.mouse.x - data.x;
+                    const dy = this.mouse.y - data.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Apply magnetic effect within 200px radius
+                    if (distance < 200) {
+                        const force = (200 - distance) / 200;
+                        const attraction = force * 0.15;
+
+                        // Add attraction towards cursor
+                        data.vx += dx * attraction * 0.02;
+                        data.vy += dy * attraction * 0.02;
+
+                        // Add visual effects
+                        if (distance < 120) {
+                            if (!data.attracted) {
+                                particle.classList.add('attracted');
+                                data.attracted = true;
+                            }
+                            particle.style.transform = `scale(${1 + force * 0.8})`;
+                            particle.style.filter = `brightness(${1 + force * 1.2}) saturate(${1 + force * 0.5})`;
+                        } else {
+                            if (data.attracted) {
+                                particle.classList.remove('attracted');
+                                data.attracted = false;
+                            }
+                            particle.style.transform = '';
+                            particle.style.filter = '';
+                        }
+
+                        // Pulse effect for very close particles
+                        if (distance < 60) {
+                            particle.classList.add('pulsing');
+                        } else {
+                            particle.classList.remove('pulsing');
+                        }
+                    } else {
+                        if (data.attracted) {
+                            particle.classList.remove('attracted', 'pulsing');
+                            data.attracted = false;
+                        }
+                        particle.style.transform = '';
+                        particle.style.filter = '';
+                    }
+                });
+            }
+
+            createBurstEffect(x, y) {
+                // Create multiple particles in a burst pattern
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2;
+                    const speed = Math.random() * 80 + 40;
+                    const burstX = x + Math.cos(angle) * speed;
+                    const burstY = y + Math.sin(angle) * speed;
+
+                    setTimeout(() => {
+                        this.createTrailParticle(burstX, burstY);
+                    }, i * 15);
+                }
+
+                // Create center explosion particle
+                const explosion = document.createElement('div');
+                explosion.className = 'particle particle-trail';
+                explosion.style.left = (x - 6) + 'px';
+                explosion.style.top = (y - 6) + 'px';
+                explosion.style.width = '12px';
+                explosion.style.height = '12px';
+                explosion.style.background = 'var(--neon-pink)';
+                explosion.style.boxShadow = '0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), 0 0 60px var(--neon-pink)';
+                explosion.style.zIndex = '10';
+
+                this.container.appendChild(explosion);
+
+                // Animate explosion
+                setTimeout(() => {
+                    explosion.style.transform = 'scale(4)';
+                    explosion.style.opacity = '0';
+                }, 10);
+
+                setTimeout(() => {
+                    if (explosion.parentNode) {
+                        explosion.parentNode.removeChild(explosion);
+                    }
+                }, 600);
+            }
+
+            createConnection(particle1, particle2) {
+                const connection = document.createElement('div');
+                connection.className = 'particle-connection';
+
+                const data1 = particle1.particleData;
+                const data2 = particle2.particleData;
+
+                const dx = data2.x - data1.x;
+                const dy = data2.y - data1.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                connection.style.width = distance + 'px';
+                connection.style.left = data1.x + 'px';
+                connection.style.top = data1.y + 'px';
+                connection.style.transform = `rotate(${angle}deg)`;
+                connection.style.transformOrigin = '0 0';
+                connection.style.opacity = Math.max(0.1, (100 - distance) / 100);
+
+                this.container.appendChild(connection);
+
+                // Remove connection after a short time
+                setTimeout(() => {
+                    if (connection.parentNode) {
+                        connection.parentNode.removeChild(connection);
+                    }
+                }, 1500);
+            }
+
+            updateParticles() {
+                this.particles.forEach((particle, index) => {
+                    const data = particle.particleData;
+
+                    // Update position
+                    data.x += data.vx;
+                    data.y += data.vy;
+
+                    // Apply physics
+                    data.vx *= 0.985; // Friction
+                    data.vy *= 0.985;
+
+                    // Add slight upward drift when not attracted
+                    if (!data.attracted) {
+                        data.vy -= 0.01;
+                    }
+
+                    // Boundary conditions - respawn particles that go off screen
+                    if (data.x < -100) {
+                        data.x = window.innerWidth + 50;
+                        data.y = Math.random() * window.innerHeight;
+                        data.vx = -Math.random() * 2 - 0.5;
+                        data.vy = (Math.random() - 0.5) * 2;
+                    }
+                    if (data.x > window.innerWidth + 100) {
+                        data.x = -50;
+                        data.y = Math.random() * window.innerHeight;
+                        data.vx = Math.random() * 2 + 0.5;
+                        data.vy = (Math.random() - 0.5) * 2;
+                    }
+                    if (data.y < -100) {
+                        data.y = window.innerHeight + 50;
+                        data.x = Math.random() * window.innerWidth;
+                        data.vx = (Math.random() - 0.5) * 2;
+                        data.vy = -Math.random() * 2 - 0.5;
+                    }
+                    if (data.y > window.innerHeight + 100) {
+                        data.y = -50;
+                        data.x = Math.random() * window.innerWidth;
+                        data.vx = (Math.random() - 0.5) * 2;
+                        data.vy = Math.random() * 2 + 0.5;
+                    }
+
+                    // Update DOM position
+                    particle.style.left = data.x + 'px';
+                    particle.style.top = data.y + 'px';
+
+                    // Dynamic glow based on speed and attraction
+                    const speed = Math.sqrt(data.vx * data.vx + data.vy * data.vy);
+                    const glowMultiplier = Math.min(speed * 3 + 1, 2.5);
+
+                    if (!data.attracted) {
+                        particle.style.filter = `brightness(${glowMultiplier})`;
+                    }
+                });
+
+                // Create connections between nearby particles occasionally
+                if (Math.random() < 0.05) { // 5% chance per frame
+                    for (let i = 0; i < this.particles.length - 1; i++) {
+                        const p1 = this.particles[i];
+                        const p2 = this.particles[i + 1];
+                        const dx = p1.particleData.x - p2.particleData.x;
+                        const dy = p1.particleData.y - p2.particleData.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 100 && Math.random() < 0.3) {
+                            this.createConnection(p1, p2);
+                            break; // Only one connection per frame
+                        }
+                    }
+                }
+            }
+
+            animate() {
+                this.updateParticles();
+                requestAnimationFrame(() => this.animate());
+            }
+
+            // Method to add more particles dynamically
+            addParticles(count = 5) {
+                for (let i = 0; i < count; i++) {
+                    const types = ['main', 'secondary', 'accent'];
+                    const randomType = types[Math.floor(Math.random() * types.length)];
+                    this.createParticle(randomType);
+                }
+            }
+
+            // Method to remove particles
+            removeParticles(count = 5) {
+                for (let i = 0; i < count && this.particles.length > 0; i++) {
+                    const particle = this.particles.pop();
+                    if (particle && particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }
+            }
+        }
+
+        // Initialize the enhanced particle system
+        let particleSystem;
+
+        // Typing effect for hero section - SINGLE IMPLEMENTATION
+        function initializeTypingEffect() {
+            const typingText = document.getElementById('typing-text');
+            if (!typingText) {
+                console.warn('Typing text element not found');
+                return;
+            }
+
+            const phrases = [
+                'Security Frameworks',
+                'Compliance Automation',
+                'Risk Management',
+                'Control Monitoring',
+                'Evidence Collection',
+                'Audit Preparation'
+            ];
+
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function typeEffect() {
+                const currentPhrase = phrases[phraseIndex];
+
+                if (isDeleting) {
+                    typingText.textContent = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    typingText.textContent = currentPhrase.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+
+                if (!isDeleting && charIndex === currentPhrase.length) {
+                    isDeleting = true;
+                    setTimeout(typeEffect, 1500);
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    setTimeout(typeEffect, 500);
+                } else {
+                    setTimeout(typeEffect, isDeleting ? 50 : 100);
+                }
+            }
+
+            typeEffect();
+        }
+
+        // Enhanced particle initialization
+        function initializeEnhancedParticles() {
+            const particleContainer = document.getElementById('particles');
+            if (!particleContainer) {
+                console.warn('Particle container not found');
+                return;
+            }
+
+            // Clear existing simple particles first
+            const existingParticles = document.querySelectorAll('#particles .particle');
+            existingParticles.forEach(p => p.remove());
+
+            // Initialize new enhanced particle system
+            particleSystem = new ParticleSystem();
+
+            console.log('Enhanced particle system initialized with cursor interaction!');
+        }
+
+        // Initialize everything when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard initializing...');
+
+            // Initialize typing effect
+            initializeTypingEffect();
+
+            // Initialize particles
+            initializeEnhancedParticles();
+
+            // Initialize other features
+            updateCountdowns();
+        });
+
+        // Additional Options JavaScript Functions
+        function confirmRestartAudit() {
+            if (confirm('⚠️ WARNING: This will reset ALL audit progress and delete all current data.\n\nAre you absolutely sure you want to restart the audit?\n\nThis action cannot be undone.')) {
+                if (confirm('Final confirmation: All compliance data, evidence, and progress will be permanently lost. Continue?')) {
+                    // Show loading state
+                    const restartBtn = document.querySelector('.restart-btn');
+                    restartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Restarting...</span>';
+                    restartBtn.disabled = true;
+
+                    // Simulate restart process (replace with actual API call)
+                    setTimeout(() => {
+                        alert('✅ Audit has been successfully restarted!\n\nYou will be redirected to the initial setup.');
+                        window.location.href = '{% url "compliance:dashboard_view" %}?restart=true';
+                    }, 2000);
+                }
+            }
+        }
+
+        function startDemo() {
+            // Show demo modal or overlay
+            const demoModal = document.createElement('div');
+            demoModal.className = 'modal active';
+            demoModal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">🎮 Demo Mode</h3>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="padding: 2rem;">
+                        <h4 style="color: var(--neon-purple); margin-bottom: 1rem;">Available Demo Scenarios</h4>
+                        <div style="display: grid; gap: 1rem;">
+                            <button onclick="loadDemoScenario('iso27001')" style="background: var(--neon-blue); border: none; padding: 1rem; border-radius: 8px; color: white; cursor: pointer;">
+                                <i class="fas fa-certificate"></i> ISO 27001 Complete Audit
+                            </button>
+                            <button onclick="loadDemoScenario('iec62443')" style="background: var(--neon-purple); border: none; padding: 1rem; border-radius: 8px; color: white; cursor: pointer;">
+                                <i class="fas fa-industry"></i> IEC 62443 Industrial Security
+                            </button>
+                            <button onclick="loadDemoScenario('nis2')" style="background: var(--success); border: none; padding: 1rem; border-radius: 8px; color: white; cursor: pointer;">
+                                <i class="fas fa-globe-europe"></i> NIS2 Essential Entity
+                            </button>
+                            <button onclick="loadDemoScenario('multi')" style="background: var(--warning); border: none; padding: 1rem; border-radius: 8px; color: white; cursor: pointer;">
+                                <i class="fas fa-layer-group"></i> Multi-Framework Compliance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(demoModal);
+        }
+
+        function loadDemoScenario(scenario) {
+            const scenarios = {
+                'iso27001': {
+                    name: 'ISO 27001 Complete Audit',
+                    description: 'Financial services organization with 500+ employees',
+                    systems: 3,
+                    controls: 93,
+                    completion: 65
+                },
+                'iec62443': {
+                    name: 'IEC 62443 Industrial Security',
+                    description: 'Manufacturing plant with OT/IT convergence',
+                    systems: 2,
+                    controls: 67,
+                    completion: 40
+                },
+                'nis2': {
+                    name: 'NIS2 Essential Entity',
+                    description: 'Energy sector critical infrastructure',
+                    systems: 4,
+                    controls: 84,
+                    completion: 78
+                },
+                'multi': {
+                    name: 'Multi-Framework Compliance',
+                    description: 'Healthcare organization with ISO 27001 + NIS2',
+                    systems: 5,
+                    controls: 156,
+                    completion: 52
+                }
+            };
+
+            const selectedScenario = scenarios[scenario];
+            alert(`🎮 Loading Demo: ${selectedScenario.name}\n\n📋 Scenario: ${selectedScenario.description}\n🖥️ Systems: ${selectedScenario.systems}\n🔧 Controls: ${selectedScenario.controls}\n📊 Completion: ${selectedScenario.completion}%\n\n⏳ Demo data will load in 3 seconds...`);
+
+            // Close demo modal
+            document.querySelector('.modal').remove();
+
+            // Simulate loading demo data
+            setTimeout(() => {
+                window.location.href = '{% url "compliance:dashboard_view" %}' + '?demo=' + scenario;
+            }, 3000);
+        }
+
+        function startTutorial() {
+            // Create tutorial overlay
+            const tutorialOverlay = document.createElement('div');
+            tutorialOverlay.className = 'tutorial-overlay';
+            tutorialOverlay.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; max-width: 600px; margin: 2rem; text-align: center;">
+                        <h3 style="color: var(--neon-blue); margin-bottom: 1.5rem;">🎓 FORTRESS PLUS Quick Tutorial</h3>
+                        <div id="tutorialStep" style="margin-bottom: 2rem;">
+                            <h4 style="color: var(--neon-purple); margin-bottom: 1rem;">Step 1: Welcome to Your Compliance Dashboard</h4>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">This is your central hub for managing compliance across multiple frameworks. You can monitor progress, manage systems, and track audit status all in one place.</p>
+                            <div style="display: flex; gap: 1rem; justify-content: center;">
+                                <button onclick="nextTutorialStep()" style="background: var(--neon-blue); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: white; cursor: pointer;">
+                                    Next <i class="fas fa-arrow-right"></i>
+                                </button>
+                                <button onclick="closeTutorial()" style="background: var(--danger); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: white; cursor: pointer;">
+                                    Skip Tutorial
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(tutorialOverlay);
+
+            // Initialize tutorial state
+            window.tutorialCurrentStep = 1;
+            window.tutorialTotalSteps = 5;
+        }
+
+        function nextTutorialStep() {
+            window.tutorialCurrentStep++;
+            const stepElement = document.getElementById('tutorialStep');
+
+            const steps = {
+
+                2: {
+                    title: 'Step 2: Journey Navigation',
+                    content: ' Start your comprehensive cybersecurity audit by clicking the "Start Audit" button. This will guide you through the process of adding systems, assigning frameworks, and managing controls.'
+                },
+                3: {
+                    title: 'Step 3: Managing Systems & Controls',
+                    content: 'Add information systems, assign frameworks, and manage controls using the dashboard table. Each system can have multiple frameworks and controls assigned.'
+                },
+                4: {
+                    title: 'Step 4: Quick Actions',
+                    content: 'Use quick actions for restart audit, demo mode, tutorials, and viewing audit history. The FORTRESS PLUS platform adapts to your compliance needs.'
+                }
+            };
+
+            if (window.tutorialCurrentStep <= window.tutorialTotalSteps) {
+                const step = steps[window.tutorialCurrentStep];
+                stepElement.innerHTML = `
+                    <h4 style="color: var(--neon-purple); margin-bottom: 1rem;">${step.title}</h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">${step.content}</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        ${window.tutorialCurrentStep < window.tutorialTotalSteps ?
+                            '<button onclick="nextTutorialStep()" style="background: var(--neon-blue); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: white; cursor: pointer;">Next <i class="fas fa-arrow-right"></i></button>' :
+                            '<button onclick="completeTutorial()" style="background: var(--success); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: white; cursor: pointer;">Complete Tutorial <i class="fas fa-check"></i></button>'
+                        }
+                        <button onclick="closeTutorial()" style="background: var(--danger); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: white; cursor: pointer;">
+                            ${window.tutorialCurrentStep < window.tutorialTotalSteps ? 'Skip Tutorial' : 'Close'}
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function completeTutorial() {
+            alert('🎉 Congratulations! You have completed the FORTRESS PLUS tutorial.\n\n✅ You are now ready to start your compliance journey.\n\n💡 Tip: You can access this tutorial anytime from the Quick Actions section.');
+            closeTutorial();
+        }
+
+        function closeTutorial() {
+            const tutorialOverlay = document.querySelector('.tutorial-overlay');
+            if (tutorialOverlay) {
+                tutorialOverlay.remove();
+            }
+        }
+
+        function showAuditHistory() {
+            const historyDiv = document.getElementById('auditHistory');
+            if (historyDiv.style.display === 'none' || historyDiv.style.display === '') {
+                historyDiv.style.display = 'block';
+
+                // Animate the appearance
+                historyDiv.style.opacity = '0';
+                historyDiv.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    historyDiv.style.transition = 'all 0.5s ease';
+                    historyDiv.style.opacity = '1';
+                    historyDiv.style.transform = 'translateY(0)';
+                }, 10);
+
+                // Update button text
+                const historyBtn = document.querySelector('.history-btn span');
+                if (historyBtn) historyBtn.textContent = 'Hide History';
+            } else {
+                historyDiv.style.opacity = '0';
+                historyDiv.style.transform = 'translateY(-20px)';
+
+                setTimeout(() => {
+                    historyDiv.style.display = 'none';
+                }, 300);
+
+                // Update button text
+                const historyBtn = document.querySelector('.history-btn span');
+                if (historyBtn) historyBtn.textContent = 'Audit History';
+            }
+        }
+
+        function loadSession(sessionId) {
+            // Implementation for loading audit session
+            alert(`Loading audit session: ${sessionId}`);
+            // Add actual implementation here
+        }
+
+        // Missing Modal Functions - FIXED
+        function openAddSystemModal() {
+            resetAddSystemForm(); // Reset form first
+            const modal = document.getElementById('addSystemModal');
+
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.classList.add('active');
+            } else {
+                console.error('Modal element not found!');
+                alert('Error: Modal element not found!');
+            }
+        }
+
+        function closeModal(modalId) {
+            console.log('closeModal called for:', modalId); // Debug log
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Reset form when modal opens
+        function resetAddSystemForm() {
+            const form = document.getElementById('addSystemForm');
+            if (form) {
+                form.reset();
+
+                // Reset all dynamic sections
+                const controlsGroup = document.getElementById('controlsGroup');
+                const implementedGroup = document.getElementById('implementedGroup');
+                const controllerSection = document.getElementById('controllerSection');
+                const controlsList = document.getElementById('controlsList');
+
+                if (controlsGroup) controlsGroup.style.display = 'none';
+                if (implementedGroup) implementedGroup.style.display = 'none';
+                if (controllerSection) controllerSection.style.display = 'none';
+                if (controlsList) controlsList.innerHTML = '';
+            }
+        }
+
+        // Load controls based on selected framework
+        function loadControls(frameworkId) {
+            console.log('loadControls called with frameworkId:', frameworkId); // Debug log
+            const controlsGroup = document.getElementById('controlsGroup');
+            const implementedGroup = document.getElementById('implementedGroup');
+            const controllerSection = document.getElementById('controllerSection');
+            const controlsList = document.getElementById('controlsList');
+
+            if (frameworkId) {
+                // Show controls section
+                if (controlsGroup) controlsGroup.style.display = 'block';
+
+                // Get CSRF token
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                                document.querySelector('meta[name=csrf-token]')?.getAttribute('content');
+
+                console.log('Fetching controls for framework:', frameworkId); // Debug log
+
+                // Fetch controls from API
+                fetch(`/api/list-controls/framework/${frameworkId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                    .then(response => {
+                        console.log('API Response status:', response.status); // Debug log
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('API Response data:', data); // Debug log
+                        if (data.success && controlsList) {
+                            let controlsHtml = '';
+                            if (data.controls && data.controls.length > 0) {
+                                data.controls.forEach(control => {
+                                    controlsHtml += `
+                                        <div class="form-checkbox">
+                                            <input type="checkbox" id="control_${control.id}" name="controls" value="${control.id}" onchange="handleControlSelection()">
+                                            <label for="control_${control.id}">${control.control_id}: ${control.title}</label>
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                controlsHtml = '<p style="color: var(--text-muted);">No controls found for this framework.</p>';
+                            }
+                            controlsList.innerHTML = controlsHtml;
+
+                            // Reset visibility of dependent sections
+                            if (implementedGroup) implementedGroup.style.display = 'none';
+                            if (controllerSection) controllerSection.style.display = 'none';
+                        } else {
+                            console.error('API returned error:', data.error || 'Unknown error');
+                            if (controlsList) {
+                                controlsList.innerHTML = '<p style="color: var(--danger);">Error: ' + (data.error || 'Failed to load controls') + '</p>';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading controls:', error);
+                        if (controlsList) {
+                            controlsList.innerHTML = '<p style="color: var(--danger);">Error loading controls. Please try again. Check console for details.</p>';
+                        }
+                    });
+            } else {
+                if (controlsGroup) controlsGroup.style.display = 'none';
+                if (implementedGroup) implementedGroup.style.display = 'none';
+                if (controllerSection) controllerSection.style.display = 'none';
+            }
+        }
+
+        // Handle control selection
+        function handleControlSelection() {
+            const implementedGroup = document.getElementById('implementedGroup');
+            const controllerSection = document.getElementById('controllerSection');
+            const checkboxes = document.querySelectorAll('#controlsList input[type="checkbox"]');
+
+            // Check if any controls are selected
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+            if (anyChecked) {
+                if (implementedGroup) implementedGroup.style.display = 'block';
+                if (controllerSection) controllerSection.style.display = 'block';
+            } else {
+                if (implementedGroup) implementedGroup.style.display = 'none';
+                if (controllerSection) controllerSection.style.display = 'none';
+            }
+        }
+
+        // Toggle controller fields based on checkbox
+        function toggleControllerFields(checkbox) {
+            const controllerFields = document.getElementById('controllerSection');
+            if (controllerFields) {
+                if (checkbox.checked) {
+                    controllerFields.style.display = 'block';
+                } else {
+                    controllerFields.style.display = 'none';
+                }
+            }
+        }
+
+        // Toggle expand functionality for table rows
+        function toggleExpand(element) {
+            element.classList.toggle('expanded');
+            const row = element.closest('tr');
+            // Add expand functionality here if needed
+        }
+
+        // Delete control function
+        function deleteControl(controlStatusId) {
+            if (confirm('Are you sure you want to delete this control assignment?')) {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                                document.querySelector('meta[name=csrf-token]')?.getAttribute('content') ||
+                                '{{ csrf_token }}';
+
+                fetch(`/delete-control-status/${controlStatusId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'action': 'delete'
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Control assignment deleted successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error deleting control: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting control. Please try again. Error: ' + error.message);
+                });
+            }
+        }
+
+        // Delete system function
+        function deleteSystem(systemId) {
+            if (confirm('Are you sure you want to delete this entire system? This will remove all controls and data associated with this system.')) {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                                document.querySelector('meta[name=csrf-token]')?.getAttribute('content') ||
+                                '{{ csrf_token }}';
+
+                fetch(`/delete-system/${systemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'action': 'delete'
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('System deleted successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error deleting system: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting system. Please try again. Error: ' + error.message);
+                });
+            }
+        }
+
+        // Update countdown timers
+        function updateCountdowns() {
+            document.querySelectorAll('.countdown[data-deadline]').forEach(element => {
+                const deadline = new Date(element.dataset.deadline);
+                const now = new Date();
+                const diff = deadline - now;
+
+                if (diff > 0) {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                    if (days < 7) {
+                        element.classList.add('urgent');
+                    }
+
+                    element.textContent = `${days}d ${hours}h`;
+                } else {
+                    element.textContent = 'Overdue';
+                    element.classList.add('urgent');
+                }
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('addSystemForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal('addSystemModal');
+                    location.reload(); // Refresh the page to show new system
+                } else {
+                    alert('Error creating system: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating system. Please try again.');
+            });
+        });
+
+        // Handle implementation status change
+        function handleImplementationStatusChange(checkbox) {
+            const statusDisplay = document.getElementById('implementationStatusDisplay');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const countdownSection = document.getElementById('countdownSection');
+            const evidenceSection = document.getElementById('evidenceSection');
+            const statusBadge = document.getElementById('statusBadge');
+            const statusTitle = document.getElementById('statusTitle');
+
+            if (checkbox.checked) {
+                // Show status display
+                if (statusDisplay) {
+                    statusDisplay.style.display = 'block';
+
+                    // Simulate progress and status update
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 10 + 5; // Random progress increase
+                        if (progress >= 100) {
+                            progress = 100;
+                            clearInterval(interval);
+
+                            // Show evidence section when complete
+                            if (evidenceSection) {
+                                evidenceSection.style.display = 'block';
+                            }
+                        }
+
+                        // Update progress bar and percentage
+                        if (progressBar) {
+                            progressBar.style.width = progress + '%';
+                        }
+                        if (progressPercentage) {
+                            progressPercentage.textContent = Math.round(progress) + '%';
+                        }
+
+                        // Update status badge and title
+                        if (statusBadge && statusTitle) {
+                            if (progress >= 100) {
+                                statusBadge.className = 'status-badge status-compliant';
+                                statusTitle.textContent = 'Fully Implemented';
+                            } else {
+                                statusBadge.className = 'status-badge status-in-progress';
+                                statusTitle.textContent = 'In Progress';
+                            }
+                        }
+                    }, 300);
+
+                    // Show countdown timer (simulate 72-hour deadline)
+                    if (countdownSection) {
+                        countdownSection.style.display = 'block';
+                        startCountdown(72, countdownSection);
+                    }
+                }
+            } else {
+                // Hide status display
+                if (statusDisplay) {
+                    statusDisplay.style.display = 'none';
+                }
+            }
+        }
+
+        // Start countdown timer
+        function startCountdown(hours, element) {
+            let totalSeconds = hours * 3600;
+            const countdownTimer = element.querySelector('.countdown-timer');
+            const countdownLabel = element.querySelector('#countdownLabel');
+            const countdownDescription = element.querySelector('#countdownDescription');
+
+            if (countdownTimer) {
+                countdownTimer.textContent = formatTime(totalSeconds);
+            }
+            if (countdownLabel) {
+                countdownLabel.textContent = 'Time Remaining';
+            }
+            if (countdownDescription) {
+                countdownDescription.textContent = `You have ${hours} hours to complete the implementation.`;
+            }
+
+            const interval = setInterval(() => {
+                totalSeconds--;
+
+                if (totalSeconds <= 0) {
+                    clearInterval(interval);
+                    if (countdownTimer) {
+                        countdownTimer.textContent = 'Time is up!';
+                    }
+                    // Optionally, trigger some action when time is up
+                } else {
+                    if (countdownTimer) {
+                        countdownTimer.textContent = formatTime(totalSeconds);
+                    }
+                }
+            }, 1000);
+        }
+
+        // Format time in HH:MM:SS
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Evidence upload function
+        function uploadEvidence() {
+            const evidenceFiles = document.getElementById('evidenceFile').files;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                            document.querySelector('meta[name=csrf-token]')?.getAttribute('content') ||
+                            '{{ csrf_token }}';
+
+            if (evidenceFiles.length === 0) {
+                alert('Please select at least one file to upload as evidence.');
+                return;
+            }
+
+            const formData = new FormData();
+            for (let i = 0; i < evidenceFiles.length; i++) {
+                formData.append('evidence_files', evidenceFiles[i]);
+            }
+
+            // Show loading state
+            const uploadBtn = document.getElementById('uploadEvidenceBtn');
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            uploadBtn.disabled = true;
+
+            fetch('/upload-evidence/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Evidence uploaded successfully!');
+                    // Optionally, refresh the page or update the UI
+                    location.reload();
+                } else {
+                    alert('Error uploading evidence: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading evidence:', error);
+                alert('Error uploading evidence. Please try again.');
+            })
+            .finally(() => {
+                // Reset button state
+                uploadBtn.innerHTML = '<i class="fas fa-check"></i> Submit Evidence';
+                uploadBtn.disabled = false;
+            });
+        }
+    </script>
+
+    {% load static %}
+    <script src="{% static 'js/countdown.js' %}"></script>
+    <script src="{% static 'js/compliance_journey_integration.js' %}"></script>
+</body>
+</html>
+

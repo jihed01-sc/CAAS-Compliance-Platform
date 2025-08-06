@@ -1,0 +1,875 @@
+const radioGroups = ['company_size', 'maturity_level', 'risk_tolerance'];
+        radioGroups.forEach(groupName => {
+            const radios = form.querySelectorAll(`input[name="${groupName}"]`);
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+            if (!isChecked) {
+                isValid = false;
+                radios.forEach(radio => {
+                    radio.closest('.radio-item').style.borderColor = 'var(--danger)';
+                });
+            } else {
+                radios.forEach(radio => {
+                    radio.closest('.radio-item').style.borderColor = 'var(--border-color)';
+                });
+            }
+        });
+
+        if (isValid) {
+            // Show success message
+            alert('Thank you for completing the questionnaire! We will analyze your responses and provide recommendations.');
+            // In a real implementation, you would submit the form data to the server
+            // form.submit();
+        } else {
+            alert('Please fill in all required fields.');
+        }
+    });
+
+    // Initialize progress
+    updateProgress();
+});
+</script>
+{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - CAAS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-bg: #0a0a0b;
+        --secondary-bg: #1a1a1d;
+        --card-bg: #16161a;
+        --neon-blue: #1547a3;
+        --neon-purple: #0ea81b;
+        --neon-green: #00ff88;
+        --neon-pink: #ff006e;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --text-muted: #666666;
+        --border-color: #333;
+        --success: #19bf72;
+        --warning: #ffb000;
+        --danger: #800727;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--primary-bg);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .questionnaire-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .questionnaire-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+    }
+
+    .questionnaire-title {
+        font-family: 'Orbitron', monospace;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--neon-green);
+        margin-bottom: 1rem;
+    }
+
+    .questionnaire-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .questionnaire-section {
+        background: var(--card-bg);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--neon-green);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-family: 'Orbitron', monospace;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--neon-green);
+    }
+
+    .question-group {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: var(--secondary-bg);
+        border-radius: 10px;
+        border-left: 4px solid var(--neon-blue);
+    }
+
+    .question-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .question-description {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 0.8rem;
+        background: var(--primary-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--neon-green);
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem;
+        background: var(--primary-bg);
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .checkbox-item:hover {
+        border-color: var(--neon-green);
+        background: rgba(0, 255, 136, 0.05);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--neon-green);
+    }
+
+    .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .radio-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem;
+        background: var(--primary-bg);
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .radio-item:hover {
+        border-color: var(--neon-green);
+        background: rgba(0, 255, 136, 0.05);
+    }
+
+    .radio-item input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--neon-green);
+    }
+
+    .submit-section {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+    }
+
+    .submit-btn {
+        --glow-color: rgb(0, 255, 136);
+        --glow-spread-color: rgb(0, 255, 136);
+        border: .25em solid var(--glow-color);
+        padding: 1.2em 3em;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: transparent;
+        border-radius: 1em;
+        outline: none;
+        box-shadow: 0 0 1em .25em var(--glow-color),
+                   0 0 4em 1em var(--glow-spread-color),
+                   inset 0 0 .75em .25em var(--glow-color);
+        text-shadow: 0 0 .5em var(--glow-color);
+        position: relative;
+        transition: all 0.3s;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .submit-btn:hover {
+        color: var(--primary-bg);
+        background-color: var(--glow-color);
+        box-shadow: 0 0 1em .25em var(--glow-color),
+                   0 0 4em 2em var(--glow-spread-color),
+                   inset 0 0 .75em .25em var(--glow-color);
+    }
+
+    .progress-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .progress-step {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--secondary-bg);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .progress-step.active {
+        background: var(--neon-green);
+        border-color: var(--neon-green);
+        color: white;
+    }
+
+    .progress-step.completed {
+        background: var(--neon-blue);
+        border-color: var(--neon-blue);
+        color: white;
+    }
+
+    .progress-line {
+        height: 2px;
+        width: 60px;
+        background: var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .progress-line.completed {
+        background: var(--neon-green);
+    }
+
+    @media (max-width: 768px) {
+        .questionnaire-container {
+            padding: 0 1rem;
+        }
+
+        .questionnaire-title {
+            font-size: 2rem;
+        }
+
+        .checkbox-group {
+            grid-template-columns: 1fr;
+        }
+
+        .progress-indicator {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="questionnaire-container">
+    <!-- Header Section -->
+    <div class="questionnaire-header">
+        <h1 class="questionnaire-title">📋 Compliance Questionnaire</h1>
+        <p class="questionnaire-subtitle">
+            Complete this comprehensive assessment to evaluate your organization's compliance posture
+        </p>
+        <p class="text-muted">
+            This questionnaire will help us understand your current compliance requirements and recommend appropriate frameworks and controls.
+        </p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+        <div class="progress-step active">1</div>
+        <div class="progress-line"></div>
+        <div class="progress-step">2</div>
+        <div class="progress-line"></div>
+        <div class="progress-step">3</div>
+        <div class="progress-line"></div>
+        <div class="progress-step">4</div>
+    </div>
+
+    <form method="post" id="complianceQuestionnaire">
+        {% csrf_token %}
+
+        <!-- Section 1: Organization Information -->
+        <div class="questionnaire-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h2 class="section-title">Organization Information</h2>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Basic Company Details</h3>
+                <p class="question-description">
+                    Provide basic information about your organization to help us understand your compliance context.
+                </p>
+
+                <div class="form-group">
+                    <label class="form-label">Company Name *</label>
+                    <input type="text" class="form-input" name="company_name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Industry Sector *</label>
+                    <select class="form-select" name="industry_sector" required>
+                        <option value="">Select Industry</option>
+                        <option value="technology">Technology</option>
+                        <option value="finance">Financial Services</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="energy">Energy & Utilities</option>
+                        <option value="government">Government</option>
+                        <option value="education">Education</option>
+                        <option value="retail">Retail</option>
+                        <option value="telecommunications">Telecommunications</option>
+                        <option value="transportation">Transportation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Company Size *</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="company_size" value="small" required>
+                            <span>Small (1-50 employees)</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="company_size" value="medium" required>
+                            <span>Medium (51-250 employees)</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="company_size" value="large" required>
+                            <span>Large (251-1000 employees)</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="company_size" value="enterprise" required>
+                            <span>Enterprise (1000+ employees)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Geographic Location</label>
+                    <input type="text" class="form-input" name="geographic_location" placeholder="e.g., Europe, North America, Global">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Current Compliance Status -->
+        <div class="questionnaire-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2 class="section-title">Current Compliance Status</h2>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Existing Compliance Frameworks</h3>
+                <p class="question-description">
+                    Which compliance frameworks are you currently implementing or planning to implement?
+                </p>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="iso27001">
+                        <span>ISO/IEC 27001:2022</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="iec62443">
+                        <span>IEC 62443 Industrial Security</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="nis2">
+                        <span>NIS2 Directive</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="gdpr">
+                        <span>GDPR</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="sox">
+                        <span>Sarbanes-Oxley (SOX)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="pci_dss">
+                        <span>PCI DSS</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="hipaa">
+                        <span>HIPAA</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="current_frameworks" value="none">
+                        <span>None - Starting fresh</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Compliance Maturity Level</h3>
+                <p class="question-description">
+                    How would you describe your organization's current compliance maturity?
+                </p>
+
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="maturity_level" value="initial" required>
+                        <span>Initial - Ad-hoc processes, no formal compliance program</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="maturity_level" value="developing" required>
+                        <span>Developing - Some processes in place, working towards compliance</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="maturity_level" value="managed" required>
+                        <span>Managed - Formal compliance program, regular assessments</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="maturity_level" value="optimized" required>
+                        <span>Optimized - Continuous improvement, automated compliance processes</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Risk Assessment -->
+        <div class="questionnaire-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h2 class="section-title">Risk Assessment & Requirements</h2>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Primary Compliance Drivers</h3>
+                <p class="question-description">
+                    What are the main reasons driving your compliance initiative?
+                </p>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="compliance_drivers" value="regulatory">
+                        <span>Regulatory Requirements</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="compliance_drivers" value="customer">
+                        <span>Customer/Client Requirements</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="compliance_drivers" value="risk_management">
+                        <span>Risk Management</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="compliance_drivers" value="competitive">
+                        <span>Competitive Advantage</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="compliance_drivers" value="incident">
+                        <span>Security Incident Response</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="compliance_drivers" value="certification">
+                        <span>Certification Requirements</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Risk Tolerance</h3>
+                <p class="question-description">
+                    What is your organization's risk tolerance level?
+                </p>
+
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="risk_tolerance" value="low" required>
+                        <span>Low - Very conservative, minimal risk acceptance</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="risk_tolerance" value="medium" required>
+                        <span>Medium - Balanced approach to risk management</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="risk_tolerance" value="high" required>
+                        <span>High - More aggressive, accepts higher levels of risk</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Timeline and Budget</h3>
+                <p class="question-description">
+                    What are your implementation constraints?
+                </p>
+
+                <div class="form-group">
+                    <label class="form-label">Target Implementation Timeline</label>
+                    <select class="form-select" name="timeline">
+                        <option value="3_months">3 Months</option>
+                        <option value="6_months">6 Months</option>
+                        <option value="12_months">12 Months</option>
+                        <option value="18_months">18+ Months</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Budget Range</label>
+                    <select class="form-select" name="budget_range">
+                        <option value="small">Small Budget (< $50k)</option>
+                        <option value="medium">Medium Budget ($50k - $200k)</option>
+                        <option value="large">Large Budget ($200k - $500k)</option>
+                        <option value="enterprise">Enterprise Budget (> $500k)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Technical Environment -->
+        <div class="questionnaire-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h2 class="section-title">Technical Environment</h2>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">IT Infrastructure</h3>
+                <p class="question-description">
+                    Describe your current IT infrastructure and systems.
+                </p>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="infrastructure" value="cloud">
+                        <span>Cloud-based Infrastructure</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="infrastructure" value="on_premise">
+                        <span>On-premise Infrastructure</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="infrastructure" value="hybrid">
+                        <span>Hybrid Cloud/On-premise</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="infrastructure" value="industrial">
+                        <span>Industrial Control Systems (OT)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="infrastructure" value="mobile">
+                        <span>Mobile/Remote Workforce</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="infrastructure" value="iot">
+                        <span>IoT Devices</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Security Controls Priority</h3>
+                <p class="question-description">
+                    Which security control areas are most important for your organization?
+                </p>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="iam">
+                        <span>Identity & Access Management</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="network">
+                        <span>Network Security</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="endpoint">
+                        <span>Endpoint Protection</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="data">
+                        <span>Data Protection</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="monitoring">
+                        <span>Security Monitoring & SIEM</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="incident_response">
+                        <span>Incident Response</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="vulnerability">
+                        <span>Vulnerability Management</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="security_priorities" value="backup">
+                        <span>Backup & Recovery</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <h3 class="question-title">Additional Comments</h3>
+                <p class="question-description">
+                    Please provide any additional information about your compliance requirements, specific challenges, or goals.
+                </p>
+
+                <div class="form-group">
+                    <label class="form-label">Comments</label>
+                    <textarea class="form-textarea" name="additional_comments" rows="5" placeholder="Share any specific requirements, challenges, or goals..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="submit-section">
+            <h3 style="color: var(--neon-green); margin-bottom: 1rem;">Ready to Submit?</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Thank you for completing the questionnaire. We'll analyze your responses and provide personalized compliance recommendations.
+            </p>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i>
+                Submit Questionnaire
+            </button>
+        </div>
+
+        <!-- NEW: Deployment Section -->
+        <div class="deployment-section" id="deploymentSection" style="display: none;">
+            <div class="deployment-header">
+                <h3 style="color: var(--neon-blue); margin-bottom: 1rem;">
+                    <i class="fas fa-rocket"></i> Deploy Your Compliance Assessment
+                </h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Based on your questionnaire responses, deploy your customized compliance framework to our testing environment.
+                </p>
+            </div>
+
+            <div class="deployment-options">
+                <div class="deployment-card">
+                    <div class="deployment-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h4>Deploy to Ngrok Environment</h4>
+                    <p>Launch your compliance assessment in our secure testing environment</p>
+                    <button type="button" class="deploy-btn" onclick="deployToNgrokFromQuestionnaire()">
+                        <i class="fas fa-play"></i>
+                        Deploy Now
+                    </button>
+                </div>
+
+                <div class="deployment-card">
+                    <div class="deployment-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h4>Preview Assessment</h4>
+                    <p>Review your compliance framework before deployment</p>
+                    <button type="button" class="preview-btn" onclick="previewAssessment()">
+                        <i class="fas fa-search"></i>
+                        Preview
+                    </button>
+                </div>
+
+                <div class="deployment-card">
+                    <div class="deployment-icon">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <h4>Visit Ngrok Environment</h4>
+                    <p>Access the direct link to your testing environment</p>
+                    <button type="button" class="visit-btn" onclick="visitNgrokEnvironment()">
+                        <i class="fas fa-globe"></i>
+                        Visit Environment
+                    </button>
+                </div>
+            </div>
+
+            <div class="deployment-status" id="deploymentStatus" style="display: none;">
+                <div class="status-card">
+                    <h4><i class="fas fa-info-circle"></i> Deployment Status</h4>
+                    <div id="statusContent"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Simple form validation and progress indication
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('complianceQuestionnaire');
+    const progressSteps = document.querySelectorAll('.progress-step');
+    const progressLines = document.querySelectorAll('.progress-line');
+
+    // Update progress based on scroll position
+    function updateProgress() {
+        const sections = document.querySelectorAll('.questionnaire-section');
+        const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+        sections.forEach((section, index) => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                // Update progress indicators
+                progressSteps.forEach((step, stepIndex) => {
+                    if (stepIndex <= index) {
+                        step.classList.add('active');
+                        if (stepIndex < index) {
+                            step.classList.add('completed');
+                        }
+                    } else {
+                        step.classList.remove('active', 'completed');
+                    }
+                });
+
+                progressLines.forEach((line, lineIndex) => {
+                    if (lineIndex < index) {
+                        line.classList.add('completed');
+                    } else {
+                        line.classList.remove('completed');
+                    }
+                });
+            }
+        });
+    }
+
+    // Listen for scroll events
+    window.addEventListener('scroll', updateProgress);
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Simple validation
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value && field.type !== 'radio' && field.type !== 'checkbox') {
+                isValid = false;
+                field.style.borderColor = 'var(--danger)';
+            } else {
+                field.style.borderColor = 'var(--border-color)';
+            }
+        });
+
+        // Check radio groups
+        const radioGroups = ['company_size', 'maturity_level', 'risk_tolerance'];
+        radioGroups.forEach(groupName => {
+            const radios = form.querySelectorAll(`input[name="${groupName}"]`);
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+            if (!isChecked) {
+                isValid = false;
+                radios.forEach(radio => {
+                    radio.closest('.radio-item').style.borderColor = 'var(--danger)';
+                });
+            } else {
+                radios.forEach(radio => {
+                    radio.closest('.radio-item').style.borderColor = 'var(--border-color)';
+                });
+            }
+        });
+
+        if (isValid) {
+            // Show success message
+            alert('Thank you for completing the questionnaire! We will analyze your responses and provide recommendations.');
+            // In a real implementation, you would submit the form data to the server
+            // form.submit();
+        } else {
+            alert('Please fill in all required fields.');
+        }
+    });
+
+    // Initialize progress
+    updateProgress();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,666 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit System - {{ system.name }}</title>
+
+    <!-- Include Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Include Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-bg: #131215;
+            --secondary-bg: rgba(19, 18, 21, 0.35);
+            --card-bg: rgba(19, 18, 21, 0.68);
+            --neon-blue: rgb(21, 71, 163);
+            --neon-purple: rgb(92, 4, 21);
+            --neon-green: #12a61e;
+            --neon-pink: #770335;
+            --text-primary: #eeeff1;
+            --text-secondary: #b3b3b3;
+            --text-muted: #666666;
+            --border-color: #333;
+            --success: #19bf72;
+            --warning: #a3843f;
+            --danger: #800727;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .edit-modal {
+            display: block !important;
+            position: relative;
+            background: transparent;
+            backdrop-filter: none;
+        }
+
+        .edit-modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .edit-modal-title {
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-modal {
+            color: var(--text-secondary);
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+            background: none;
+            border: none;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .form-section {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: var(--neon-purple);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .submit-btn {
+            --glow-color: rgb(0, 212, 255);
+            --glow-spread-color: rgba(0, 212, 255, 0.6);
+            --btn-color: rgb(0, 100, 150);
+            border: .2em solid var(--glow-color);
+            padding: 1em 2em;
+            color: var(--glow-color);
+            font-size: 14px;
+            font-weight: bold;
+            background-color: var(--btn-color);
+            border-radius: 1em;
+            outline: none;
+            box-shadow: 0 0 1em .2em var(--glow-color),
+                   0 0 3em 1em var(--glow-spread-color),
+                   inset 0 0 .5em .2em var(--glow-color);
+            text-shadow: 0 0 .4em var(--glow-color);
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
+        }
+
+        .submit-btn:hover {
+            color: var(--btn-color);
+            background-color: var(--glow-color);
+            box-shadow: 0 0 1em .25em var(--glow-color),
+                   0 0 4em 1.5em var(--glow-spread-color),
+                   inset 0 0 .75em .25em var(--glow-color);
+        }
+
+        .framework-badge {
+            background: var(--neon-blue);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin: 0.2rem;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+
+        .remove-framework-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-modal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h3 class="edit-modal-title">✏️ Edit System Configuration</h3>
+                <button class="close-modal" onclick="window.history.back()">&times;</button>
+            </div>
+
+            <form method="post" id="editSystemForm">
+                {% csrf_token %}
+
+                <!-- Basic System Information Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-server"></i> Basic System Information</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">System Name <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="editSystemName" name="name" value="{{ system.name }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Organization</label>
+                            <select class="form-select" id="editSystemOrganization" name="organization">
+                                <option value="">Select Organization (Optional)</option>
+                                {% for org in organizations %}
+                                <option value="{{ org.id }}" {% if system.organization.id == org.id %}selected{% endif %}>{{ org.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" id="editSystemDescription" name="description" rows="3">{{ system.description }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Client Details Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-building"></i> Client Profile & Business Context</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Client Company Name</label>
+                            <input type="text" class="form-input" id="editClientCompanyName" name="client_company_name" value="{{ system.client_company_name }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Business Sector</label>
+                            <select class="form-select" id="editClientSector" name="client_sector">
+                                <option value="technology" {% if system.client_sector == 'technology' %}selected{% endif %}>Technology</option>
+                                <option value="finance" {% if system.client_sector == 'finance' %}selected{% endif %}>Financial Services</option>
+                                <option value="healthcare" {% if system.client_sector == 'healthcare' %}selected{% endif %}>Healthcare</option>
+                                <option value="manufacturing" {% if system.client_sector == 'manufacturing' %}selected{% endif %}>Manufacturing</option>
+                                <option value="energy" {% if system.client_sector == 'energy' %}selected{% endif %}>Energy & Utilities</option>
+                                <option value="government" {% if system.client_sector == 'government' %}selected{% endif %}>Government</option>
+                                <option value="education" {% if system.client_sector == 'education' %}selected{% endif %}>Education</option>
+                                <option value="retail" {% if system.client_sector == 'retail' %}selected{% endif %}>Retail</option>
+                                <option value="telecommunications" {% if system.client_sector == 'telecommunications' %}selected{% endif %}>Telecommunications</option>
+                                <option value="transportation" {% if system.client_sector == 'transportation' %}selected{% endif %}>Transportation</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Organization Size</label>
+                            <select class="form-select" id="editOrganizationSize" name="organization_size">
+                                <option value="smb" {% if system.organization_size == 'smb' %}selected{% endif %}>Small & Medium Business (SMB)</option>
+                                <option value="mid-market" {% if system.organization_size == 'mid-market' %}selected{% endif %}>Mid-Market</option>
+                                <option value="enterprise" {% if system.organization_size == 'enterprise' %}selected{% endif %}>Enterprise</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Operational Scope</label>
+                            <select class="form-select" id="editOperationalScope" name="operational_scope">
+                                <option value="it" {% if system.operational_scope == 'it' %}selected{% endif %}>IT Systems Only</option>
+                                <option value="ot" {% if system.operational_scope == 'ot' %}selected{% endif %}>OT/Industrial Systems Only</option>
+                                <option value="it_ot_convergence" {% if system.operational_scope == 'it_ot_convergence' %}selected{% endif %}>IT/OT Convergence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Geographical Location</label>
+                            <input type="text" class="form-input" id="editGeographicalLocation" name="geographical_location" value="{{ system.geographical_location }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Regulatory Jurisdiction</label>
+                            <select class="form-select" id="editRegulatoryJurisdiction" name="regulatory_jurisdiction">
+                                <option value="eu" {% if system.regulatory_jurisdiction == 'eu' %}selected{% endif %}>European Union</option>
+                                <option value="us" {% if system.regulatory_jurisdiction == 'us' %}selected{% endif %}>United States</option>
+                                <option value="apac" {% if system.regulatory_jurisdiction == 'apac' %}selected{% endif %}>Asia-Pacific</option>
+                                <option value="global" {% if system.regulatory_jurisdiction == 'global' %}selected{% endif %}>Global/Multi-jurisdiction</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Business Criticality</label>
+                        <select class="form-select" id="editBusinessCriticality" name="business_criticality">
+                            <option value="high" {% if system.business_criticality == 'high' %}selected{% endif %}>High - Mission Critical</option>
+                            <option value="medium" {% if system.business_criticality == 'medium' %}selected{% endif %}>Medium - Business Important</option>
+                            <option value="low" {% if system.business_criticality == 'low' %}selected{% endif %}>Low - Support Function</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Current Frameworks Display -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-shield-alt"></i> Current Frameworks & Standards</h4>
+                    <div id="currentFrameworksDisplay">
+                        {% for framework in system_frameworks %}
+                        <div class="framework-badge" data-framework-id="{{ framework.id }}">
+                            {{ framework.name }}
+                            <button type="button" class="remove-framework-btn" onclick="removeFramework({{ framework.id }})">&times;</button>
+                        </div>
+                        {% empty %}
+                        <p style="color: var(--text-muted);">No frameworks currently assigned to this system.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Framework Management Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-plus-circle"></i> Add New Framework</h4>
+
+                    <div class="form-group">
+                        <label class="form-label">Select Framework to Add</label>
+                        <select class="form-select" id="editNewFramework" name="new_framework" onchange="loadControlsForEdit(this.value)">
+                            <option value="">Select Framework to Add</option>
+                            <!-- Frameworks will be loaded via JavaScript -->
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="editControlsGroup" style="display: none;">
+                        <label class="form-label">Select Controls to Add</label>
+                        <div id="editControlsList"></div>
+                    </div>
+                </div>
+
+                <!-- Audit Focus Areas Section -->
+                <div class="form-section">
+                    <h4 class="section-title"><i class="fas fa-crosshairs"></i> Audit Focus Areas</h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                        Update the security domains for this system.
+                    </p>
+
+                    <div class="form-group">
+                        <label class="form-label">Core Security Modules</label>
+                        <div class="checkbox-grid">
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="iam" id="edit_iam_module">
+                                <label for="edit_iam_module">Identity & Access Management (IAM)</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="governance" id="edit_governance_module">
+                                <label for="edit_governance_module">Governance & Risk Management</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="logging" id="edit_logging_module">
+                                <label for="edit_logging_module">Logging & Monitoring</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="patch_management" id="edit_patch_module">
+                                <label for="edit_patch_module">Patch Management</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="incident_response" id="edit_incident_module">
+                                <label for="edit_incident_module">Incident Response</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="data_protection" id="edit_data_module">
+                                <label for="edit_data_module">Data Protection & Privacy</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="network_security" id="edit_network_module">
+                                <label for="edit_network_module">Network Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="physical_security" id="edit_physical_module">
+                                <label for="edit_physical_module">Physical Security</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="business_continuity" id="edit_bc_module">
+                                <label for="edit_bc_module">Business Continuity</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" name="audit_modules" value="vendor_management" id="edit_vendor_module">
+                                <label for="edit_vendor_module">Third-Party & Vendor Management</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i>
+                    Update System Configuration
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Edit System Modal JavaScript Functions
+
+        // Load available frameworks on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAvailableFrameworks();
+            loadCurrentAuditModules();
+        });
+
+        // Load frameworks that can be added to the system
+        function loadAvailableFrameworks() {
+            const frameworkSelect = document.getElementById('editNewFramework');
+            if (!frameworkSelect) return;
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+            fetch('/api/frameworks/', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.frameworks) {
+                    // Clear existing options except the first one
+                    frameworkSelect.innerHTML = '<option value="">Select Framework to Add</option>';
+
+                    // Get current framework IDs to exclude them
+                    const currentFrameworkIds = Array.from(document.querySelectorAll('[data-framework-id]'))
+                        .map(el => parseInt(el.dataset.frameworkId));
+
+                    data.frameworks.forEach(framework => {
+                        // Only add frameworks that are not already assigned
+                        if (!currentFrameworkIds.includes(framework.id)) {
+                            const option = document.createElement('option');
+                            option.value = framework.id;
+                            option.textContent = framework.name;
+                            frameworkSelect.appendChild(option);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading frameworks:', error);
+            });
+        }
+
+        // Load controls for the selected framework
+        function loadControlsForEdit(frameworkId) {
+            const controlsGroup = document.getElementById('editControlsGroup');
+            const controlsList = document.getElementById('editControlsList');
+
+            if (frameworkId) {
+                controlsGroup.style.display = 'block';
+
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+                fetch(`/api/list-controls/framework/${frameworkId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success && controlsList) {
+                        let controlsHtml = '';
+                        if (data.controls && data.controls.length > 0) {
+                            data.controls.forEach(control => {
+                                controlsHtml += `
+                                    <div class="form-checkbox">
+                                        <input type="checkbox" id="edit_control_${control.id}" name="new_controls" value="${control.id}">
+                                        <label for="edit_control_${control.id}">${control.control_id}: ${control.title}</label>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            controlsHtml = '<p style="color: var(--text-muted);">No controls found for this framework.</p>';
+                        }
+                        controlsList.innerHTML = controlsHtml;
+                    } else {
+                        console.error('API returned error:', data.error || 'Unknown error');
+                        if (controlsList) {
+                            controlsList.innerHTML = '<p style="color: var(--danger);">Error: ' + (data.error || 'Failed to load controls') + '</p>';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading controls:', error);
+                    if (controlsList) {
+                        controlsList.innerHTML = '<p style="color: var(--danger);">Error loading controls. Please try again.</p>';
+                    }
+                });
+            } else {
+                controlsGroup.style.display = 'none';
+            }
+        }
+
+        // Remove framework from system
+        function removeFramework(frameworkId) {
+            if (confirm('Are you sure you want to remove this framework and all its associated controls from this system?')) {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+                fetch(`/api/remove-framework/{{ system.id }}/${frameworkId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        'action': 'remove_framework'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the framework badge from UI
+                        const frameworkBadge = document.querySelector(`[data-framework-id="${frameworkId}"]`);
+                        if (frameworkBadge) {
+                            frameworkBadge.remove();
+                        }
+
+                        // Reload available frameworks
+                        loadAvailableFrameworks();
+
+                        alert('Framework removed successfully!');
+                    } else {
+                        alert('Error removing framework: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing framework:', error);
+                    alert('Error removing framework. Please try again.');
+                });
+            }
+        }
+
+        // Load current audit modules for the system
+        function loadCurrentAuditModules() {
+            // This would load the current audit modules assigned to the system
+            // You can implement this based on your system's data structure
+            const systemId = {{ system.id }};
+
+            // Example: Check the checkboxes based on current audit modules
+            // This would come from your backend data
+            {% if system.audit_modules %}
+                const auditModules = '{{ system.audit_modules }}'.split(',');
+                auditModules.forEach(module => {
+                    const checkbox = document.getElementById(`edit_${module.trim()}_module`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            {% endif %}
+        }
+
+        // Handle form submission
+        document.getElementById('editSystemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            // Add system ID to form data
+            formData.append('system_id', {{ system.id }});
+
+            fetch('{% url "compliance:edit_system" system_id=system.id %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('System updated successfully!');
+                    window.location.href = '{% url "compliance:dashboard_view" %}';
+                } else {
+                    alert('Error updating system: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error updating system:', error);
+                alert('Error updating system. Please try again.');
+            });
+        });
+
+        // Close modal function (if used as modal)
+        function closeEditModal() {
+            window.history.back();
+        }
+
+        // Escape key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+            }
+        });
+    </script>
+</body>
+</html>

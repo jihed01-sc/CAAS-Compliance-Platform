@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Tracker</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Compliance Tracker</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Controls</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="compliance-data"></tbody>
+        </table>
+    </div>
+    <script>
+        // JavaScript to fetch and display data
+        fetch('/api/')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('compliance-data');
+                data.forEach(item => {
+                    const row = `<tr>
+                        <td>${item.name}</td>
+                        <td>${item.total_controls}</td>
+                        <td>${item.compliance_status}%</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            });
+    </script>
+</body>
+</html>

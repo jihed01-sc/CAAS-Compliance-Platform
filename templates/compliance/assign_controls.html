@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Controls - {{ system.name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            animation: backgroundShift 10s ease infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            50% { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+            to { text-shadow: 0 0 30px rgba(255,255,255,0.6); }
+        }
+
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title i {
+            color: #667eea;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .controls-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            animation: tableSlide 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes tableSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .controls-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .controls-table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        }
+
+        .controls-table td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        .controls-table tbody tr {
+            transition: all 0.3s ease;
+            animation: rowFadeIn 0.6s ease-out both;
+        }
+
+        .controls-table tbody tr:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        .controls-table tbody tr:nth-child(odd) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes rowFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e9ecff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .control-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .control-checkbox:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            animation: checkboxBounce 0.3s ease;
+        }
+
+        @keyframes checkboxBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .control-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-select:hover {
+            border-color: #667eea;
+        }
+
+        .prev-impl-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #28a745;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .prev-impl-checkbox:checked {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: #28a745;
+            animation: checkboxBounce 0.3s ease;
+        }
+
+        .prev-impl-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(108, 117, 125, 0.4);
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: none;
+            animation: alertSlide 0.6s ease-out;
+        }
+
+        @keyframes alertSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 50px;
+            padding: 15px 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            animation: backBtnFloat 0.8s ease-out;
+        }
+
+        @keyframes backBtnFloat {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .select-all-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        .select-all-checkbox {
+            width: 25px;
+            height: 25px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .select-all-checkbox:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            animation: checkboxBounce 0.3s ease;
+        }
+
+        .select-all-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .select-all-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .control-id {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .framework-badge {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            color: #495057;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .controls-table {
+                font-size: 14px;
+            }
+            
+            .controls-table th,
+            .controls-table td {
+                padding: 10px 8px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .back-btn {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            margin: -25px 0 0 -25px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back button - using relative URL since we don't know the exact URL name -->
+    <a href="../" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to System
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-shield-alt"></i> Assign Controls</h1>
+            <div class="subtitle">
+                <p>System: <strong>Test System</strong></p>
+                <p>Configure security controls and assign controllers</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <form method="post" action="" id="assignForm">
+                <!-- Django CSRF token will be added by the backend -->
+                <input type="hidden" name="csrfmiddlewaretoken" value="dummy_csrf_token">
+                
+                <!-- Demo data - replace with actual Django template variables -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-list-check"></i>
+                        Available Controls
+                    </h2>
+                    
+                    <div class="select-all-container">
+                        <input type="checkbox" id="selectAll" class="select-all-checkbox">
+                        <label for="selectAll" class="select-all-label">Select All Controls</label>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="controls-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-check-square"></i> Select</th>
+                                    <th><i class="fas fa-hashtag"></i> Control ID</th>
+                                    <th><i class="fas fa-tag"></i> Control Name</th>
+                                    <th><i class="fas fa-layer-group"></i> Framework</th>
+                                    <th><i class="fas fa-user-cog"></i> Controller</th>
+                                    <th><i class="fas fa-history"></i> Previously Implemented</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sample control rows - replace with Django template loop -->
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="controls" value="1" 
+                                               class="control-checkbox" id="control_1">
+                                    </td>
+                                    <td>
+                                        <span class="control-id">AC-1</span>
+                                    </td>
+                                    <td>
+                                        <strong>Access Control Policy and Procedures</strong>
+                                        <br>
+                                        <small style="color: #666;">Establish and maintain access control policies and procedures</small>
+                                    </td>
+                                    <td>
+                                        <span class="framework-badge">NIST SP 800-53</span>
+                                    </td>
+                                    <td>
+                                        <select name="controller_1" class="form-select">
+                                            <option value="">Select Controller</option>
+                                            <option value="1">John Smith</option>
+                                            <option value="2">Jane Doe</option>
+                                            <option value="3">Mike Johnson</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="previously_implemented_1" 
+                                               value="true" class="prev-impl-checkbox" id="prev_impl_1">
+                                        <label for="prev_impl_1" style="margin-left: 8px; font-size: 12px; color: #666;">
+                                            Already implemented
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="controls" value="2" 
+                                               class="control-checkbox" id="control_2">
+                                    </td>
+                                    <td>
+                                        <span class="control-id">AC-2</span>
+                                    </td>
+                                    <td>
+                                        <strong>Account Management</strong>
+                                        <br>
+                                        <small style="color: #666;">Manage system accounts and access authorizations</small>
+                                    </td>
+                                    <td>
+                                        <span class="framework-badge">NIST SP 800-53</span>
+                                    </td>
+                                    <td>
+                                        <select name="controller_2" class="form-select">
+                                            <option value="">Select Controller</option>
+                                            <option value="1">John Smith</option>
+                                            <option value="2">Jane Doe</option>
+                                            <option value="3">Mike Johnson</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="previously_implemented_2" 
+                                               value="true" class="prev-impl-checkbox" id="prev_impl_2">
+                                        <label for="prev_impl_2" style="margin-left: 8px; font-size: 12px; color: #666;">
+                                            Already implemented
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="controls" value="3" 
+                                               class="control-checkbox" id="control_3">
+                                    </td>
+                                    <td>
+                                        <span class="control-id">AC-3</span>
+                                    </td>
+                                    <td>
+                                        <strong>Access Enforcement</strong>
+                                        <br>
+                                        <small style="color: #666;">Enforce approved authorizations for logical access</small>
+                                    </td>
+                                    <td>
+                                        <span class="framework-badge">NIST SP 800-53</span>
+                                    </td>
+                                    <td>
+                                        <select name="controller_3" class="form-select">
+                                            <option value="">Select Controller</option>
+                                            <option value="1">John Smith</option>
+                                            <option value="2">Jane Doe</option>
+                                            <option value="3">Mike Johnson</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="previously_implemented_3" 
+                                               value="true" class="prev-impl-checkbox" id="prev_impl_3">
+                                        <label for="prev_impl_3" style="margin-left: 8px; font-size: 12px; color: #666;">
+                                            Already implemented
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="controls" value="4" 
+                                               class="control-checkbox" id="control_4">
+                                    </td>
+                                    <td>
+                                        <span class="control-id">AU-1</span>
+                                    </td>
+                                    <td>
+                                        <strong>Audit and Accountability Policy</strong>
+                                        <br>
+                                        <small style="color: #666;">Establish audit and accountability policies and procedures</small>
+                                    </td>
+                                    <td>
+                                        <span class="framework-badge">NIST SP 800-53</span>
+                                    </td>
+                                    <td>
+                                        <select name="controller_4" class="form-select">
+                                            <option value="">Select Controller</option>
+                                            <option value="1">John Smith</option>
+                                            <option value="2">Jane Doe</option>
+                                            <option value="3">Mike Johnson</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="previously_implemented_4" 
+                                               value="true" class="prev-impl-checkbox" id="prev_impl_4">
+                                        <label for="prev_impl_4" style="margin-left: 8px; font-size: 12px; color: #666;">
+                                            Already implemented
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="controls" value="5" 
+                                               class="control-checkbox" id="control_5">
+                                    </td>
+                                    <td>
+                                        <span class="control-id">CM-1</span>
+                                    </td>
+                                    <td>
+                                        <strong>Configuration Management Policy</strong>
+                                        <br>
+                                        <small style="color: #666;">Establish configuration management policies and procedures</small>
+                                    </td>
+                                    <td>
+                                        <span class="framework-badge">NIST SP 800-53</span>
+                                    </td>
+                                    <td>
+                                        <select name="controller_5" class="form-select">
+                                            <option value="">Select Controller</option>
+                                            <option value="1">John Smith</option>
+                                            <option value="2">Jane Doe</option>
+                                            <option value="3">Mike Johnson</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="previously_implemented_5" 
+                                               value="true" class="prev-impl-checkbox" id="prev_impl_5">
+                                        <label for="prev_impl_5" style="margin-left: 8px; font-size: 12px; color: #666;">
+                                            Already implemented
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i>
+                            Assign Selected Controls
+                        </button>
+                        <a href="../" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select All functionality
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const controlCheckboxes = document.querySelectorAll('.control-checkbox');
+            
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    controlCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                        // Trigger animation
+                        if (this.checked) {
+                            checkbox.style.animation = 'checkboxBounce 0.3s ease';
+                        }
+                    });
+                });
+
+                // Update select all based on individual checkboxes
+                controlCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const checkedCount = document.querySelectorAll('.control-checkbox:checked').length;
+                        const totalCount = controlCheckboxes.length;
+                        
+                        selectAllCheckbox.checked = checkedCount === totalCount;
+                        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+                    });
+                });
+            }
+
+            // Form submission with loading state
+            const form = document.getElementById('assignForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const checkedControls = document.querySelectorAll('.control-checkbox:checked');
+                    
+                    if (checkedControls.length === 0) {
+                        e.preventDefault();
+                        alert('Please select at least one control to assign.');
+                        return;
+                    }
+
+                    // Add loading state
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning Controls...';
+                    submitBtn.disabled = true;
+                    
+                    // Add loading class to container
+                    document.querySelector('.container').classList.add('loading');
+                    
+                    // If form validation fails, restore button
+                    setTimeout(() => {
+                        if (form.checkValidity && !form.checkValidity()) {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                            document.querySelector('.container').classList.remove('loading');
+                        }
+                    }, 100);
+                });
+            }
+
+            // Enhanced hover effects for table rows
+            const tableRows = document.querySelectorAll('.controls-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Smooth scrolling for back button
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUrl = this.href;
+                    
+                    // Add fade out animation
+                    document.querySelector('.container').style.animation = 'fadeOut 0.3s ease-out';
+                    
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 300);
+                });
+            }
+        });
+
+        // Add fadeOut animation for smooth transitions
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+

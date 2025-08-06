@@ -1,0 +1,770 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gap Analysis - CAAS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-bg: #0a0a0b;
+        --secondary-bg: #1a1a1d;
+        --card-bg: #16161a;
+        --neon-blue: #1a51c6;
+        --neon-green: #00ff88;
+        --neon-purple: #8b5cf6;
+        --neon-orange: #ff8c00;
+        --neon-red: #ff0040;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --success: #10b981;
+    }
+
+    .gap-analysis-container {
+        background: var(--primary-bg);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .section-header {
+        background: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .gap-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .gap-metric {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .gap-metric::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--neon-red), var(--neon-orange));
+    }
+
+    .gap-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .gap-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .gap-priority {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .priority-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .priority-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--neon-red);
+    }
+
+    .priority-count {
+        background: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .gap-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .gap-item {
+        background: linear-gradient(135deg, rgba(255, 0, 64, 0.1), rgba(255, 140, 0, 0.1));
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 0, 64, 0.3);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .gap-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(255, 0, 64, 0.2);
+    }
+
+    .gap-severity {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .severity-critical {
+        background: var(--danger);
+        color: white;
+    }
+
+    .severity-high {
+        background: var(--neon-orange);
+        color: white;
+    }
+
+    .severity-medium {
+        background: var(--warning);
+        color: black;
+    }
+
+    .severity-low {
+        background: var(--success);
+        color: white;
+    }
+
+    .gap-category {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--neon-red);
+        margin-bottom: 0.5rem;
+    }
+
+    .gap-description {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .gap-impact {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .impact-score {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .impact-bar {
+        background: rgba(255, 255, 255, 0.1);
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+        flex: 1;
+        margin: 0 1rem;
+    }
+
+    .impact-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--neon-red), var(--neon-orange));
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    .gap-recommendations {
+        margin-top: 1rem;
+    }
+
+    .recommendation-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        border-left: 3px solid var(--neon-blue);
+    }
+
+    .recommendation-title {
+        font-weight: 600;
+        color: var(--neon-blue);
+        margin-bottom: 0.25rem;
+    }
+
+    .recommendation-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .framework-gaps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .framework-gap-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .framework-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--neon-purple);
+        margin-bottom: 1rem;
+    }
+
+    .gap-score-visual {
+        position: relative;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 1rem 0;
+    }
+
+    .current-score {
+        height: 100%;
+        background: linear-gradient(90deg, var(--danger), var(--warning), var(--success));
+        border-radius: 10px;
+        transition: width 0.5s ease;
+        position: relative;
+    }
+
+    .target-score {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 14px;
+        background: var(--neon-green);
+        border-radius: 2px;
+    }
+
+    .score-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+    }
+
+    .missing-controls {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .control-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .control-item:last-child {
+        border-bottom: none;
+    }
+
+    .control-id {
+        font-weight: 600;
+        color: var(--neon-orange);
+    }
+
+    .control-status {
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .status-missing {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+    }
+
+    .status-partial {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+    }
+
+    .remediation-plan {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .timeline-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 40px;
+        bottom: -20px;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .timeline-item:last-child::before {
+        display: none;
+    }
+
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: white;
+        font-weight: bold;
+        z-index: 1;
+        position: relative;
+    }
+
+    .timeline-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        color: var(--neon-blue);
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-duration {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .action-btn {
+        background: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
+        border: none;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 0, 64, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .summary-stats {
+        background: linear-gradient(135deg, rgba(255, 0, 64, 0.1), rgba(255, 140, 0, 0.1));
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 0, 64, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .gap-overview {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .gap-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .framework-gaps {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="gap-analysis-container">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="section-header">
+            <h1><i class="fas fa-search"></i> Comprehensive Gap Analysis</h1>
+            <p>Detailed analysis of compliance gaps identified through assessment and system evaluation</p>
+        </div>
+
+        <!-- Gap Overview Metrics -->
+        <div class="gap-overview">
+            <div class="gap-metric">
+                <div class="gap-number" style="color: var(--danger);">{{ critical_gaps|length }}</div>
+                <div class="gap-label">Critical Gaps</div>
+            </div>
+            <div class="gap-metric">
+                <div class="gap-number" style="color: var(--warning);">{{ high_gaps|length }}</div>
+                <div class="gap-label">High Priority</div>
+            </div>
+            <div class="gap-metric">
+                <div class="gap-number" style="color: var(--neon-orange);">{{ medium_gaps|length }}</div>
+                <div class="gap-label">Medium Priority</div>
+            </div>
+            <div class="gap-metric">
+                <div class="gap-number" style="color: var(--neon-blue);">{{ total_gaps }}</div>
+                <div class="gap-label">Total Gaps</div>
+            </div>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="summary-stats">
+            <h3><i class="fas fa-chart-pie"></i> Gap Analysis Summary</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Overall Gap Score:</strong>
+                    <div style="font-size: 1.5rem; color: var(--neon-red); font-weight: bold;">
+                        {{ overall_gap_score }}%
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <strong>Most Critical Area:</strong>
+                    <div style="color: var(--neon-orange);">{{ most_critical_area }}</div>
+                </div>
+                <div class="col-md-3">
+                    <strong>Estimated Effort:</strong>
+                    <div style="color: var(--neon-blue);">{{ total_effort_weeks }} weeks</div>
+                </div>
+                <div class="col-md-3">
+                    <strong>Priority Actions:</strong>
+                    <div style="color: var(--neon-purple);">{{ priority_actions_count }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Gaps Section -->
+        {% if critical_gaps %}
+        <div class="gap-priority">
+            <div class="priority-header">
+                <div class="priority-title">
+                    <i class="fas fa-exclamation-triangle"></i> Critical Gaps
+                </div>
+                <div class="priority-count">{{ critical_gaps|length }}</div>
+            </div>
+
+            <div class="gap-grid">
+                {% for gap in critical_gaps %}
+                <div class="gap-item">
+                    <div class="gap-severity severity-critical">Critical</div>
+
+                    <div class="gap-category">{{ gap.category|title }}</div>
+                    <div class="gap-description">{{ gap.description }}</div>
+
+                    <div class="gap-impact">
+                        <div class="impact-score">
+                            <span>Impact Score</span>
+                            <span style="font-weight: bold; color: var(--neon-red);">{{ gap.impact_score }}/10</span>
+                        </div>
+                        <div class="impact-bar">
+                            <div class="impact-fill" style="width: {{ gap.impact_score|mul:10 }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="gap-recommendations">
+                        <strong style="color: var(--neon-blue);">Immediate Actions:</strong>
+                        {% for action in gap.immediate_actions %}
+                        <div class="recommendation-item">
+                            <div class="recommendation-title">{{ action.title }}</div>
+                            <div class="recommendation-text">{{ action.description }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Framework-Specific Gaps -->
+        <div class="framework-gaps">
+            {% for framework_name, gap_data in framework_gaps.items %}
+            <div class="framework-gap-card">
+                <div class="framework-name">{{ framework_name }}</div>
+
+                <div class="gap-score-visual">
+                    <div class="current-score" style="width: {{ gap_data.current_score }}%;"></div>
+                    <div class="target-score" style="left: {{ gap_data.target_score }}%;"></div>
+                </div>
+
+                <div class="score-labels">
+                    <span>Current: {{ gap_data.current_score }}%</span>
+                    <span>Target: {{ gap_data.target_score }}%</span>
+                </div>
+
+                <div class="missing-controls">
+                    <strong>Missing/Partial Controls:</strong>
+                    {% for control in gap_data.missing_controls %}
+                    <div class="control-item">
+                        <div>
+                            <div class="control-id">{{ control.control_id }}</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">{{ control.title }}</div>
+                        </div>
+                        <div class="control-status status-{{ control.status }}">
+                            {{ control.status|title }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Remediation Timeline -->
+        <div class="remediation-plan">
+            <h3><i class="fas fa-road"></i> Recommended Remediation Timeline</h3>
+            <p class="text-secondary mb-4">Suggested implementation order based on risk and dependencies</p>
+
+            <div class="timeline-item">
+                <div class="timeline-icon">1</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Immediate Actions (Week 1-2)</div>
+                    <div class="timeline-duration">Address critical security gaps and compliance violations</div>
+                    <ul class="mt-2">
+                        <li>Implement emergency access controls</li>
+                        <li>Establish incident response procedures</li>
+                        <li>Deploy critical security patches</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-icon">2</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Short-term Fixes (Week 3-6)</div>
+                    <div class="timeline-duration">Implement high-priority controls and documentation</div>
+                    <ul class="mt-2">
+                        <li>Complete policy documentation</li>
+                        <li>Implement user access management</li>
+                        <li>Establish monitoring procedures</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-icon">3</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Medium-term Implementation (Week 7-16)</div>
+                    <div class="timeline-duration">Deploy comprehensive controls and training</div>
+                    <ul class="mt-2">
+                        <li>Implement advanced security controls</li>
+                        <li>Conduct staff training programs</li>
+                        <li>Establish regular audit procedures</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-icon">4</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Long-term Optimization (Week 17+)</div>
+                    <div class="timeline-duration">Continuous improvement and maturity enhancement</div>
+                    <ul class="mt-2">
+                        <li>Optimize existing controls</li>
+                        <li>Implement advanced analytics</li>
+                        <li>Achieve full compliance certification</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category-wise Gap Breakdown -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card bg-dark">
+                    <div class="card-header">
+                        <h4><i class="fas fa-layer-group"></i> Gaps by Category</h4>
+                    </div>
+                    <div class="card-body">
+                        {% for category, count in gaps_by_category.items %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>{{ category|title }}</span>
+                            <span class="badge badge-danger">{{ count }}</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-gradient-danger" style="width: {{ count|mul:10 }}%;"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card bg-dark">
+                    <div class="card-header">
+                        <h4><i class="fas fa-shield-alt"></i> Risk Distribution</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="risk-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span style="color: var(--danger);">Critical Risk</span>
+                                <span>{{ critical_risk_percentage }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" style="background: var(--danger); width: {{ critical_risk_percentage }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="risk-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span style="color: var(--warning);">High Risk</span>
+                                <span>{{ high_risk_percentage }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" style="background: var(--warning); width: {{ high_risk_percentage }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="risk-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span style="color: var(--neon-orange);">Medium Risk</span>
+                                <span>{{ medium_risk_percentage }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" style="background: var(--neon-orange); width: {{ medium_risk_percentage }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'compliance:recommendations' %}" class="action-btn">
+                <i class="fas fa-lightbulb"></i>
+                View Recommendations
+            </a>
+
+            <a href="{% url 'compliance:questionnaire' %}" class="action-btn">
+                <i class="fas fa-clipboard-list"></i>
+                Retake Assessment
+            </a>
+
+            <a href="{% url 'compliance:re_evaluation' %}" class="action-btn">
+                <i class="fas fa-chart-line"></i>
+                Progress Tracking
+            </a>
+
+            <a href="{% url 'compliance:reports_dashboard' %}" class="action-btn">
+                <i class="fas fa-file-export"></i>
+                Export Report
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate impact bars
+    const impactBars = document.querySelectorAll('.impact-fill');
+    impactBars.forEach((bar, index) => {
+        setTimeout(() => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        }, index * 200);
+    });
+
+    // Animate framework progress bars
+    const frameworkBars = document.querySelectorAll('.current-score');
+    frameworkBars.forEach((bar, index) => {
+        setTimeout(() => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        }, index * 300);
+    });
+
+    // Add hover effects to gap items
+    const gapItems = document.querySelectorAll('.gap-item');
+    gapItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.borderColor = 'var(--neon-red)';
+        });
+
+        item.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'rgba(255, 0, 64, 0.3)';
+        });
+    });
+
+    // Timeline animation
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateX(0)';
+            }
+        });
+    });
+
+    timelineItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-20px)';
+        item.style.transition = 'all 0.5s ease';
+        observer.observe(item);
+    });
+});
+</script>
+{% endblock %}

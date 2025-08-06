@@ -1,0 +1,879 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAAS - Fortress Plus Enterprise | NEARTRUST&TRUSTWAVE Tunisia</title>
+
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #12121a;
+            --card-bg: #1a1a26;
+            --glass-bg: rgba(26, 26, 38, 0.6);
+            --neon-blue: #00d4ff;
+            --neon-purple: #800af6;
+            --neon-green: #00ff88;
+            --neon-pink: #ff006e;
+            --neon-orange: #ff7b00;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c2cc;
+            --text-muted: #6b7280;
+            --border-color: #2d2d3d;
+            --glow-color: rgba(0, 212, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(1deg); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+            box-shadow: 0 0 6px var(--neon-blue);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+
+        .fortress-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--neon-blue);
+        }
+
+        .login-btn:hover {
+            background: var(--neon-blue);
+            color: var(--primary-bg);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .register-btn:hover {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--neon-green);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 50px var(--glow-color);
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.2); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--neon-orange);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
+
+        .get-started-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .get-started-btn:hover {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+        }
+
+        /* About Section - Horizontal Layout */
+        .about-section {
+            padding: 8rem 2rem;
+            background: var(--secondary-bg);
+            position: relative;
+        }
+
+        .about-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-content h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--neon-blue);
+        }
+
+        .about-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .fortress-info {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            margin-top: 2rem;
+        }
+
+        .fortress-info h3 {
+            color: var(--neon-green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .branch-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .branch-tag {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--neon-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Frameworks Section */
+        .frameworks-section {
+            padding: 8rem 2rem;
+            background: var(--primary-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--neon-purple);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .frameworks-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .framework-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .framework-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .framework-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .framework-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .framework-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .framework-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feature-tag {
+            background: var(--card-bg);
+            color: var(--neon-green);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .framework-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--neon-blue);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .framework-logo:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--neon-blue);
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .frameworks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-brand">
+                <div class="fortress-logo">F+</div>
+                <span>CAAS Platform</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#frameworks" class="nav-link">Frameworks</a>
+            </div>
+
+            <div class="auth-buttons">
+                <a href="{% url 'custom_login_view' %}" class="auth-btn login-btn">Login</a>
+                <a href="{% url 'register' %}" class="auth-btn register-btn">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-shield-alt"></i>
+                Fortress Plus Enterprise - NEARTRUST&TRUSTWAVE Tunisia
+            </div>
+            <h1>CAAS Platform</h1>
+            <p class="hero-subtitle">Compliance as a Service</p>
+            <p class="hero-description">
+                Revolutionary cybersecurity compliance platform powered by Fortress Plus Enterprise.
+                Our Tunisia branch NEARTRUST&TRUSTWAVE delivers comprehensive IT/OT security solutions
+                based on international standards (NIST, ISO 27x, IEC 62443) with expert consulting
+                and tailored security frameworks for organizations across all sectors.
+            </p>
+            <a href="{% url 'compliance:dashboard_view' %}" class="get-started-btn">
+                <span>Get Started</span>
+                <i class="fas fa-rocket"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="about-container">
+            <div class="about-content">
+                <h2>About Fortress Plus</h2>
+                <p>
+                    Fortress Plus is an IT/OT cybersecurity and physical security consulting firm,
+                    founded in January 2021 and based in France with operations in Tunisia.
+                </p>
+                <p>
+                    We bring together top experts and experienced consultants to offer a wide range
+                    of security services (360°) tailored to the needs of our clients across multiple sectors.
+                </p>
+                <p>
+                    All our offers are based on the best practices of international security standards
+                    and norms (NIST, ISO 27x, IEC 62443, CSA, ASIS, NIS 2, LPM, ANSSI, etc.) and on
+                    our extensive multi-sector experience.
+                </p>
+
+                <div class="fortress-info">
+                    <h3><i class="fas fa-globe"></i> Global Presence</h3>
+                    <p>Headquartered in France with strategic operations in Tunisia through our
+                       NEARTRUST&TRUSTWAVE branch, providing localized expertise and support.</p>
+                    <div class="branch-info">
+                        <span class="branch-tag">🇫🇷 France </span>
+                        <span class="branch-tag">🇹🇳 Tunisia - NEARTRUST&TRUSTWAVE</span>
+                        <span class="branch-tag">360° Security Services</span>
+                        <span class="branch-tag">Multi-Sector Experience</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-stats">
+                <div class="stat-card">
+                    <span class="stat-number">360°</span>
+                    <span class="stat-label">Security Services</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">2021</span>
+                    <span class="stat-label">Founded</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10+</span>
+                    <span class="stat-label">International Standards</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Client Satisfaction</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Frameworks Section -->
+    <section id="frameworks" class="frameworks-section">
+        <div class="section-header">
+            <h2 class="section-title">Supported Security Frameworks</h2>
+            <p class="section-subtitle">
+                Our CAAS platform specializes in these internationally recognized cybersecurity frameworks,
+                providing comprehensive compliance management and assessment capabilities.
+            </p>
+        </div>
+
+        <div class="frameworks-grid">
+            <div class="framework-card">
+                <div class="framework-logo">NIS2</div>
+                <h3 class="framework-title">NIS 2 Directive</h3>
+                <p class="framework-description">
+                    Network and Information Systems Directive 2.0 - Enhanced cybersecurity requirements
+                    for critical entities across the EU. Comprehensive risk management, incident response,
+                    and supply chain security measures.
+                </p>
+                <div class="framework-features">
+                    <span class="feature-tag">Risk Management</span>
+                    <span class="feature-tag">Incident Response</span>
+                    <span class="feature-tag">Supply Chain Security</span>
+                    <span class="feature-tag">Critical Infrastructure</span>
+                </div>
+            </div>
+
+            <div class="framework-card">
+                <div class="framework-logo">ISO</div>
+                <h3 class="framework-title">ISO 27001/27002</h3>
+                <p class="framework-description">
+                    International standard for Information Security Management Systems (ISMS).
+                    Provides a systematic approach to managing sensitive company information and
+                    ensuring comprehensive security controls implementation.
+                </p>
+                <div class="framework-features">
+                    <span class="feature-tag">ISMS Management</span>
+                    <span class="feature-tag">Security Controls</span>
+                    <span class="feature-tag">Continuous Improvement</span>
+                    <span class="feature-tag">Certification Ready</span>
+                </div>
+            </div>
+
+            <div class="framework-card">
+                <div class="framework-logo">NIST</div>
+                <h3 class="framework-title">NIST Cybersecurity Framework</h3>
+                <p class="framework-description">
+                    National Institute of Standards and Technology framework providing a policy
+                    framework of computer security guidance. Includes Identify, Protect, Detect,
+                    Respond, and Recover functions for comprehensive cyber risk management.
+                </p>
+                <div class="framework-features">
+                    <span class="feature-tag">Risk Assessment</span>
+                    <span class="feature-tag">Asset Management</span>
+                    <span class="feature-tag">Threat Detection</span>
+                    <span class="feature-tag">Recovery Planning</span>
+                </div>
+            </div>
+
+            <div class="framework-card">
+                <div class="framework-logo">IEC</div>
+                <h3 class="framework-title">IEC 62443</h3>
+                <p class="framework-description">
+                    Industrial Communication Networks - IT Security for automation and control systems.
+                    Specialized framework for industrial cybersecurity covering OT environments,
+                    SCADA systems, and critical infrastructure protection.
+                </p>
+                <div class="framework-features">
+                    <span class="feature-tag">Industrial Security</span>
+                    <span class="feature-tag">OT Protection</span>
+                    <span class="feature-tag">SCADA Security</span>
+                    <span class="feature-tag">Zone & Conduit</span>
+                </div>
+            </div>
+
+            <div class="framework-card">
+                <div class="framework-logo">ANSSI</div>
+                <h3 class="framework-title">ANSSI Guidelines</h3>
+                <p class="framework-description">
+                    French National Cybersecurity Agency guidelines and recommendations.
+                    Comprehensive cybersecurity measures for French organizations, including
+                    critical infrastructure protection and government sector compliance.
+                </p>
+                <div class="framework-features">
+                    <span class="feature-tag">French Compliance</span>
+                    <span class="feature-tag">Critical Systems</span>
+                    <span class="feature-tag">Government Standards</span>
+                    <span class="feature-tag">National Security</span>
+                </div>
+            </div>
+
+            <div class="framework-card">
+                <div class="framework-logo">CSA</div>
+                <h3 class="framework-title">CSA Cloud Security</h3>
+                <p class="framework-description">
+                    Cloud Security Alliance framework for cloud computing security. Provides
+                    comprehensive guidelines for cloud service providers and consumers, including
+                    data protection, privacy, and compliance in cloud environments.
+                </p>
+                <div class="framework-features">
+                    <span class="feature-tag">Cloud Security</span>
+                    <span class="feature-tag">Data Protection</span>
+                    <span class="feature-tag">Privacy Controls</span>
+                    <span class="feature-tag">Multi-Cloud</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="fortress-logo">F+</div>
+                <span style="font-family: 'Orbitron', monospace; font-size: 1.2rem; color: var(--neon-blue);">
+                    Fortress Plus Enterprise
+                </span>
+            </div>
+
+            <div class="footer-links">
+                <a href="#home" class="footer-link">Home</a>
+                <a href="#about" class="footer-link">About Fortress Plus</a>
+                <a href="#frameworks" class="footer-link">Security Frameworks</a>
+                <a href="{% url 'custom_login_view' %}" class="footer-link">Login</a>
+                <a href="{% url 'register' %}" class="footer-link">Register</a>
+            </div>
+
+            <p class="footer-text">
+                © 2024 Fortress Plus Enterprise. NEARTRUST&TRUSTWAVE Tunisia Branch.
+                All rights reserved. | Cybersecurity Excellence Since 2021
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Create more particles dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const particleContainer = document.querySelector('.particles');
+
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particleContainer.appendChild(particle);
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+

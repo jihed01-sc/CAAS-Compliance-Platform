@@ -1,0 +1,316 @@
+{% extends 'authentication/auth_base.html' %}
+
+{% block title %}Register - CAAS{% endblock %}
+
+{% block content %}
+<form class="form_container" method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+
+    <!-- Logo -->
+    <div class="logo_container">
+        CAAS
+    </div>
+
+    <!-- Title Section -->
+    <div class="title_container">
+        <p class="title">Create your Account</p>
+        <span class="subtitle">Join our compliance platform and start managing your security frameworks today.</span>
+    </div>
+
+    <!-- Error Messages -->
+    {% if form.non_field_errors %}
+        <div class="error-message">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Username Field -->
+    <div class="input_container">
+        <label class="input_label" for="id_username">Username</label>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke="currentColor" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+        </div>
+        <input
+            placeholder="Choose a username"
+            title="Username"
+            name="username"
+            type="text"
+            class="input_field"
+            id="id_username"
+            value="{{ fieldValues.username|default:'' }}"
+            required>
+    </div>
+
+    <!-- Email Field -->
+    <div class="input_container">
+        <label class="input_label" for="id_email">Email Address</label>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="currentColor" d="M7 8.5L9.94202 10.2394C11.6572 11.2535 12.3428 11.2535 14.058 10.2394L17 8.5"></path>
+                <path stroke-linejoin="round" stroke-width="1.5" stroke="currentColor" d="M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"></path>
+            </svg>
+        </div>
+        <input
+            placeholder="Enter your email address"
+            title="Email"
+            name="email"
+            type="email"
+            class="input_field"
+            id="id_email"
+            value="{{ fieldValues.email|default:'' }}"
+            required>
+    </div>
+
+    <!-- First Name Field -->
+    <div class="input_container">
+        <label class="input_label" for="id_first_name">First Name</label>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke="currentColor" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+        </div>
+        <input
+            placeholder="Enter your first name"
+            title="First Name"
+            name="first_name"
+            type="text"
+            class="input_field"
+            id="id_first_name"
+            value="{{ fieldValues.first_name|default:'' }}"
+            required>
+    </div>
+
+    <!-- Last Name Field -->
+    <div class="input_container">
+        <label class="input_label" for="id_last_name">Last Name</label>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke="currentColor" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+        </div>
+        <input
+            placeholder="Enter your last name"
+            title="Last Name"
+            name="last_name"
+            type="text"
+            class="input_field"
+            id="id_last_name"
+            value="{{ fieldValues.last_name|default:'' }}"
+            required>
+    </div>
+
+    <!-- Password Field -->
+    <div class="input_container">
+        <label class="input_label" for="id_password1">Password</label>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-width="1.5" stroke="currentColor" d="M18 11.0041C17.4166 9.91704 16.273 9.15775 14.9519 9.0993C13.477 9.03404 11.9788 9 10.329 9C8.67911 9 7.18091 9.03404 5.70604 9.0993C3.95328 9.17685 2.51295 10.4881 2.27882 12.1618C2.12602 13.2541 2 14.3734 2 15.5134C2 16.6534 2.12602 17.7727 2.27882 18.865C2.51295 20.5387 3.95328 21.8499 5.70604 21.9275C6.42013 21.9591 7.26041 21.9834 8 22"></path>
+                <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="currentColor" d="M6 9V6.5C6 4.01472 8.01472 2 10.5 2C12.9853 2 15 4.01472 15 6.5V9"></path>
+            </svg>
+        </div>
+        <input
+            placeholder="Create a strong password"
+            title="Password"
+            name="password1"
+            type="password"
+            class="input_field"
+            id="id_password1"
+            required>
+        {% if form.password1.errors %}
+            <small style="color: var(--danger); font-size: 0.75rem;">{{ form.password1.errors.0 }}</small>
+        {% endif %}
+    </div>
+
+    <!-- Password Confirmation Field -->
+    <div class="input_container">
+        <label class="input_label" for="id_password2">Confirm Password</label>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-width="1.5" stroke="currentColor" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <input
+            placeholder="Confirm your password"
+            title="Confirm Password"
+            name="password2"
+            type="password"
+            class="input_field"
+            id="id_password2"
+            required>
+        {% if form.password2.errors %}
+            <small style="color: var(--danger); font-size: 0.75rem;">{{ form.password2.errors.0 }}</small>
+        {% endif %}
+    </div>
+
+    <!-- Terms and Conditions -->
+    <label class="checkbox-label" for="terms_checkbox">
+        <input type="checkbox" name="terms_accepted" id="terms_checkbox" required>
+        <span>I agree to the <a href="#" onclick="alert('Terms of Service page not implemented yet')">Terms of Service</a> and <a href="#" onclick="alert('Privacy Policy page not implemented yet')">Privacy Policy</a></span>
+    </label>
+
+    <!-- Marketing Emails -->
+    <label class="checkbox-label" for="marketing_checkbox">
+        <input type="checkbox" name="marketing_emails" id="marketing_checkbox">
+        <span>I'd like to receive updates about new features and compliance insights</span>
+    </label>
+
+    <!-- Register Button -->
+    <button title="Create Account" type="submit" class="sign-in_btn">
+        <span>Create Account</span>
+    </button>
+
+    <!-- Separator -->
+    <div class="separator">
+        <hr class="line">
+        <span>Or sign up with</span>
+        <hr class="line">
+    </div>
+
+    <!-- Social Registration Buttons -->
+    <button title="Sign Up with Google" type="button" class="sign-in_ggl" onclick="alert('Google SSO not configured yet')">
+        <svg height="18" width="18" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#fbbc05" d="M0 37V11l17 13z"></path>
+            <path fill="#ea4335" d="M0 11l17 13 7-6.1L48 14V0H0z"></path>
+            <path fill="#34a853" d="M0 37l30-23 7.9 1L48 0v48H0z"></path>
+            <path fill="#4285f4" d="M48 48L17 24l-4-3 35-10z"></path>
+        </svg>
+        <span>Sign Up with Google</span>
+    </button>
+
+    <button title="Sign Up with Microsoft" type="button" class="sign-in_apl" onclick="alert('Microsoft SSO not configured yet')">
+        <svg preserveAspectRatio="xMidYMid" version="1.1" viewBox="0 0 256 315" height="20px" width="16px" xmlns="http://www.w3.org/2000/svg">
+            <g>
+                <path fill="#ffffff" d="M213.803394,167.030943 C214.2452,214.609646 255.542482,230.442639 256,230.644727 C255.650812,231.761357 249.401383,253.208293 234.24263,275.361446 C221.138555,294.513969 207.538253,313.596333 186.113759,313.991545 C165.062051,314.379442 158.292752,301.507828 134.22469,301.507828 C110.163898,301.507828 102.642899,313.596301 82.7151126,314.379442 C62.0350407,315.16201 46.2873831,293.668525 33.0744079,274.586162 C6.07529317,235.552544 -14.5576169,164.286328 13.147166,116.18047 C26.9103111,92.2909053 51.5060917,77.1630356 78.2026125,76.7751096 C98.5099145,76.3877456 117.677594,90.4371851 130.091705,90.4371851 C142.497945,90.4371851 165.790755,73.5415029 190.277627,76.0228474 C200.528668,76.4495055 229.303509,80.1636878 247.780625,107.209389 C246.291825,108.132333 213.44635,127.253405 213.803394,167.030988 M174.239142,50.1987033 C185.218331,36.9088319 192.607958,18.4081019 190.591988,0 C174.766312,0.636050225 155.629514,10.5457909 144.278109,23.8283506 C134.10507,35.5906758 125.195775,54.4170275 127.599657,72.4607932 C145.239231,73.8255433 163.259413,63.4970262 174.239142,50.1987249"></path>
+            </g>
+        </svg>
+        <span>Sign Up with Microsoft</span>
+    </button>
+
+    <!-- Switch to Login -->
+    <div class="switch-form">
+        Already have an account? <a href="{% url 'custom_login_view' %}">Sign in here</a>
+    </div>
+
+    <!-- Terms -->
+    <p class="note">
+        By creating an account, you agree to our <a href="#" style="color: var(--neon-blue);">Terms of Service</a> & <a href="#" style="color: var(--neon-blue);">Privacy Policy</a>
+    </p>
+</form>
+
+<script>
+    // Add password strength indicator
+    document.addEventListener('DOMContentLoaded', function() {
+        const password1 = document.getElementById('id_password1');
+        const password2 = document.getElementById('id_password2');
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            return strength;
+        }
+
+        // Add password strength indicator
+        const strengthIndicator = document.createElement('div');
+        strengthIndicator.style.cssText = `
+            width: 100%;
+            height: 4px;
+            background: var(--input-border);
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        `;
+
+        const strengthBar = document.createElement('div');
+        strengthBar.style.cssText = `
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        `;
+
+        strengthIndicator.appendChild(strengthBar);
+        password1.parentNode.appendChild(strengthIndicator);
+
+        password1.addEventListener('input', function() {
+            const strength = checkPasswordStrength(this.value);
+            const percentage = (strength / 5) * 100;
+
+            strengthBar.style.width = percentage + '%';
+
+            if (strength < 2) {
+                strengthBar.style.background = 'var(--danger)';
+            } else if (strength < 4) {
+                strengthBar.style.background = 'var(--warning)';
+            } else {
+                strengthBar.style.background = 'var(--success)';
+            }
+        });
+
+        // Password confirmation validation
+        password2.addEventListener('input', function() {
+            if (this.value && this.value !== password1.value) {
+                this.style.borderColor = 'var(--danger)';
+            } else {
+                this.style.borderColor = 'var(--neon-blue)';
+            }
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const requiredFields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2'];
+            let isValid = true;
+
+            requiredFields.forEach(fieldName => {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                if (!field.value) {
+                    isValid = false;
+                    field.style.borderColor = 'var(--danger)';
+                }
+            });
+
+            if (password1.value !== password2.value) {
+                isValid = false;
+                password2.style.borderColor = 'var(--danger)';
+                alert('Passwords do not match!');
+            }
+
+            const termsCheckbox = document.querySelector('[name="terms_accepted"]');
+            if (!termsCheckbox.checked) {
+                isValid = false;
+                alert('Please accept the Terms of Service and Privacy Policy.');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.querySelector('.sign-in_btn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+            submitBtn.disabled = true;
+        });
+    });
+</script>
+{% endblock %}
+
+

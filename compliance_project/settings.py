@@ -123,12 +123,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if DEBUG:
     # Enable real email sending for password reset
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'jihed.amor@enetcom.u-sfax.tn'  # Your email
+    EMAIL_HOST_USER =  os.environ.get('EMAIL_USER')  # Your email
     EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-
     # Uncomment the line below if you want to see emails in console instead
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:

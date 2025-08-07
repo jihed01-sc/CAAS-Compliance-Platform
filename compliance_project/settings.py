@@ -127,7 +127,7 @@ if DEBUG:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'jihed.amor@enetcom.u-sfax.tn'  # Your email
-    EMAIL_HOST_PASSWORD = 'your-gmail-app-password'  # You need to set this
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
     # Uncomment the line below if you want to see emails in console instead
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -145,7 +145,7 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@caas.com')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Password reset token timeout (24 hours)
-PASSWORD_RESET_TIMEOUT = 86400  # 24 hours in seconds
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
 # Login/Logout URLs
 LOGIN_URL = '/auth/login/'
